@@ -1,0 +1,17 @@
+plugin.tx_news {
+    persistence {
+        classes {
+            TYPO3\CMS\Core\Authentication\BackendUserAuthentication {
+                subclasses {
+                    0 = SKeuper\BackendIpLogin\Domain\Model\BackendUser
+                }
+            }
+            SKeuper\BackendIpLogin\Domain\Model\BackendUser {
+                mapping {
+                    recordType = 0
+                    tableName = be_users
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,8 @@
+# cat=Configuration; type=boolean; label=LLL:EXT:backend_ip_login/Resources/Private/Language/locallang_em.xlf:backendiplogin.config.useNetworkAddress
+useNetworkAddress = 0
+
+# cat=Configuration; type=int[1-32]; label=LLL:EXT:backend_ip_login/Resources/Private/Language/locallang_em.xlf:backendiplogin.config.netMaskBits
+netMaskBits = 24
+
+# cat=Options; type=boolean; label=LLL:EXT:backend_ip_login/Resources/Private/Language/locallang_em.xlf:backendiplogin.config.displayAccounts
+displayAccounts = 1

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff version="1.0" xmlns:t3="http://typo3.org/schemas/xliff">
+	<file source-language="en" datatype="plaintext" original="messages" date="2017-05-03T11:45:52Z" product-name="backend_ip_login">
+		<header/>
+		<body>
+			<trans-unit id="backendiplogin.config.useNetworkAddress">
+				<source>
+				    Use network address: Use the network address instead of the ip address
+				</source>
+			</trans-unit>
+			<trans-unit id="backendiplogin.config.netMaskBits">
+				<source>
+				    Netmask Bits: How many bits should be used in the netmask(default \24)
+				</source>
+			</trans-unit>
+			<trans-unit id="backendiplogin.config.displayAccounts">
+				<source>
+				    Display accounts: Display accounts instead of automatically logging in in the first account with the highest privileges. No password required if chosen from these accounts. (Not implemented yet)
+				</source>
+			</trans-unit>
+		</body>
+	</file>
+</xliff>

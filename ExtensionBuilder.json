@@ -1,0 +1,39 @@
+{
+    "modules": [],
+    "properties": {
+        "backendModules": [],
+        "description": "Remember access from ip masks and auto login to the backend.",
+        "emConf": {
+            "category": "services",
+            "custom_category": "",
+            "dependsOn": "typo3 => 8.7.0-8.7.99\n",
+            "disableLocalization": false,
+            "disableVersioning": false,
+            "skipGenerateDocumentationTemplate": false,
+            "sourceLanguage": "en",
+            "state": "test",
+            "targetVersion": "7.6.0-7.6.99",
+            "version": "1.0.0"
+        },
+        "extensionKey": "backend_ip_login",
+        "name": "Backend IP Auto Login",
+        "originalExtensionKey": "",
+        "originalVendorName": "",
+        "persons": [
+            {
+                "company": "",
+                "email": "steffen.keuper@web.de",
+                "name": "Steffen Keuper",
+                "role": "Developer"
+            }
+        ],
+        "plugins": [],
+        "vendorName": "SKeuper"
+    },
+    "wires": [],
+    "log": {
+        "last_modified": "2017-04-26 01:53",
+        "extension_builder_version": "7.6.18",
+        "be_user": " (1)"
+    }
+}
