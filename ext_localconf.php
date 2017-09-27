@@ -21,6 +21,4 @@ if (!defined('TYPO3_MODE')) {
     )
 );
 
-// ToDo:
-// - save ip address on successful login from other services
 \SKeuper\BackendIpLogin\Hook\PageRendererHook::register();

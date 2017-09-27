@@ -25,7 +25,9 @@
 
 namespace SKeuper\BackendIpLogin\Hook;
 
-use SKeuper\BackendIpLogin\Utility\DatabaseUtility;
+use SKeuper\BackendIpLogin\Domain\Repository\BackendUserRepository;
+use SKeuper\BackendIpLogin\Domain\Session\BackendSessionHandler;
+use SKeuper\BackendIpLogin\Utility\ConfigurationUtility;
 use SKeuper\BackendIpLogin\Utility\IpUtility;
 use TYPO3\CMS\Core\Page\PageRenderer;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -57,39 +59,83 @@ class PageRendererHook
      * @param $parameters
      * @param $Obj
      */
-    function pageRendererPreProcessHook($parameters, &$Obj)
+    public function pageRendererPreProcessHook($parameters, &$Obj)
     {
-        // FixMe:
-        // other extensions injecting js code inline into the footer breaks this check
-        if ($_SERVER["SCRIPT_NAME"] === "/typo3/index.php" && !$GLOBALS['BE_USER']->user && !$parameters["jsFooterInline"] && DatabaseUtility::existBackendUser()) {
+        /** @var ObjectManager $objectManager */
+        $objectManager = GeneralUtility::makeInstance(ObjectManager::class);
+
+        // FixMe other extensions injecting js code inline into the footer breaks this check
+        if (TYPO3_MODE == 'BE' && !$GLOBALS['BE_USER']->user
+            && !$parameters["jsFooterInline"]
+            && $backendUsers = BackendUserRepository::getBackendUsers(
+                GeneralUtility::getIndpEnv('REMOTE_ADDR'),
+                IpUtility::getNetworkAddress()
+            )
+        ) {
+            $cssFiles = [];
+            $jsFiles = [];
             $typo3Version = VersionNumberUtility::convertVersionNumberToInteger(TYPO3_version);
             if ($typo3Version >= 4000000 and $typo3Version < 6000000) {
+                // 4.x is not supported anymore…
                 # TYPO3 4.x
                 $jsCode = "Ext.select('#t3-login-submit').elements[0].click();";
             } elseif ($typo3Version >= 6000000 and $typo3Version < 7000000) {
                 # TYPO3 6.x
-                $jsCode = "var lb = Ext.select('#logout-button input').elements[0];lb.setAttribute('disabled','disabled');lb.value = '" . IpUtility::getIP() . "';";
+                $jsCode = "var lb = Ext.select('#logout-button input').elements[0];lb.setAttribute('disabled','disabled');lb.value = '" . GeneralUtility::getIndpEnv('REMOTE_ADDR') . "';";
             } elseif ($typo3Version >= 7000000 and $typo3Version < 9000000) {
                 # TYPO3 7.x & 8.x added a javascript check for username and password form field, easiest method to
                 # disable the check is removing the fields
-                $jsCode = "$('#t3-login-username-section').remove();$('#t3-login-password-section').remove();$('#t3-login-submit').click();";
+                $cssFiles = array(
+                    "typo3conf/ext/backend_ip_login/Resources/Public/css/login.css",
+                    "typo3conf/ext/backend_ip_login/Resources/Public/bootstrap/3.3.5/css/bootstrap.min.css",
+                    "typo3conf/ext/backend_ip_login/Resources/Public/bootstrap/3.3.5/css/bootstrap-theme.min.css",
+                );
+                if (ConfigurationUtility::getConfigurationKey("option.displayAccounts")) {
+                    $jsCode = @file_get_contents(PATH_site . "typo3conf/ext/backend_ip_login/Resources/Public/js/login.js");
+                    foreach (array_reverse($backendUsers) as $backendUser) {
+                        $jsCode .= sprintf("userform.prepend('%s');",
+                            '<button type="button" class="btn btn-block btn-login">' . $backendUser['username'] . '</button>'
+                        );
+                    }
+                } else {
+                    $jsCode = "$('#t3-login-username-section').remove();$('#t3-login-password-section').remove();$('#t3-login-submit').click();";
+                }
             } else {
                 # unknown number, don't take any action in the template
                 $jsCode = "";
             }
 
-            /** @var ObjectManager $objectManager */
-            $objectManager = GeneralUtility::makeInstance('TYPO3\CMS\Extbase\Object\ObjectManager');
-
             /** @var PageRenderer $pageRenderer */
-            $pageRenderer = $objectManager->get('TYPO3\CMS\Core\Page\PageRenderer');
-            $pageRenderer->addJsFooterInlineCode("backend auto login", $jsCode);
-
+            $pageRenderer = $objectManager->get(PageRenderer::class);
             /*
              * old way to inject js code, deprecated since TYPO3 8.x
              * TYPO3\CMS\Backend\Template\DocumentTemplate->preStartPageHook
              * $Obj->extJScode .= $jsCode;
              */
+            $pageRenderer->addJsFooterInlineCode("backend auto login", $jsCode);
+
+            foreach ($cssFiles as $cssFile) {
+                $pageRenderer->addCssFile($cssFile);
+            }
+            foreach ($jsFiles as $jsFile) {
+                $pageRenderer->addJsFooterFile($jsFile);
+            }
+        }
+
+        // save the ip address and network address on successful login
+        /** @var BackendSessionHandler $backendSessionHandler */
+        $backendSessionHandler = $objectManager->get(BackendSessionHandler::class);
+        if ($GLOBALS['BE_USER']->user && !$backendSessionHandler->get("saved_ip")) {
+            $allowLocalNetwork = boolval(ConfigurationUtility::getConfigurationKey("option.allowLocalNetwork"));
+            // don't update the ip information if accessed from the local network
+            if (!($allowLocalNetwork && IpUtility::isLocalNetworkAddress())) {
+                BackendUserRepository::updateIpInformation(
+                    $GLOBALS['BE_USER']->user['uid'],
+                    GeneralUtility::getIndpEnv('REMOTE_ADDR'),
+                    IpUtility::getNetworkAddress()
+                );
+            }
+            $backendSessionHandler->store("saved_ip", true);
         }
     }
 }

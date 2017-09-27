@@ -8,14 +8,22 @@
 				    Use network address: Use the network address instead of the ip address
 				</source>
 			</trans-unit>
-			<trans-unit id="backendiplogin.config.netMaskBits">
+			<trans-unit id="backendiplogin.config.networkMask">
 				<source>
-				    Netmask Bits: How many bits should be used in the netmask(default \24)
+				    Network Mask: What network mask should get used(default 255.255.255.0).
+				    Changing this will result in invalid saved network addresses and you have to login once again to refresh the entry.
 				</source>
 			</trans-unit>
 			<trans-unit id="backendiplogin.config.displayAccounts">
 				<source>
-				    Display accounts: Display accounts instead of automatically logging in in the first account with the highest privileges. No password required if chosen from these accounts. (Not implemented yet)
+				    Display accounts: Display accounts instead of automatically logging in in the first account with the highest privileges.
+				    No password required if chosen from these accounts. (Not implemented yet)
+				</source>
+			</trans-unit>
+			<trans-unit id="backendiplogin.config.allowLocalNetwork">
+				<source>
+				    Allow local network: If accessed from the local network ignore selected useNetworkAddress option and allow the local network address.
+				    Selects the highest authorized user who logged in the last.
 				</source>
 			</trans-unit>
 		</body>

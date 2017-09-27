@@ -1,4 +1,4 @@
-plugin.tx_news {
+plugin.tx_backendiplogin {
     persistence {
         classes {
             TYPO3\CMS\Core\Authentication\BackendUserAuthentication {

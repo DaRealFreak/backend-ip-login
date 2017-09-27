@@ -25,57 +25,78 @@
 
 namespace SKeuper\BackendIpLogin\Utility;
 
+use TYPO3\CMS\Core\Utility\GeneralUtility;
+
 /**
  * Class IpUtility
  * @package SKeuper\BackendIpLogin\Utility
  */
 class IpUtility
 {
-    // ToDo:
-    // extract this to settings
-    const ipNmask = "255.255.255.0";
 
     /**
      * check if the user is from the local network
      *
      * @return bool
      */
-    static public function isLocalNetworkAddress() {
-        return boolval(preg_match('/(192.168.1.[\d]+|127.0.0.1)/', self::getIP()));
-    }
+    static public function isLocalNetworkAddress()
+    {
+        // private IP ranges; see RFC 6890 or https://en.wikipedia.org/wiki/Private_network#Private_IPv4_address_spaces
+        // ip ranges used for private usage according to https://tools.ietf.org/html/rfc1918
+        $localNetworkRules = array(
+            array(
+                // 10/8
+                "NETWORK_ADDRESS" => "10.0.0.0",
+                "NETWORK_MASK" => "255.0.0.0"
+            ),
+            array(
+                // 192.168/16
+                "NETWORK_ADDRESS" => "192.168.0.0",
+                "NETWORK_MASK" => "255.255.0.0"
+            ),
+            array(
+                // 172.16/12
+                "NETWORK_ADDRESS" => "172.16.0.0",
+                "NETWORK_MASK" => "255.240.0.0"
+            )
+        );
 
-    /**
-     * returns the ip based on the most common keys
-     *
-     * @return string
-     */
-    static public function getIP() {
-        if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
-            $ip = $_SERVER['HTTP_CLIENT_IP'];
-        } elseif (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
-            $ip = $_SERVER['HTTP_X_FORWARDED_FOR'];
-        } else {
-            $ip = $_SERVER['REMOTE_ADDR'];
+        // prefer outer proxy over internal ip address
+        $clientIp = $_SERVER['HTTP_X_FORWARDED_FOR'] ? $_SERVER['HTTP_X_FORWARDED_FOR']: $_SERVER['REMOTE_ADDR'];
+        if (!$clientIp) {
+            return False;
         }
-        return $ip;
+
+        foreach ($localNetworkRules as $localNetworkRule) {
+            $networkAddress = self::getNetworkAddress($_SERVER['HTTP_X_FORWARDED_FOR'], $localNetworkRule['NETWORK_MASK']);
+            if ($networkAddress == $localNetworkRule['NETWORK_ADDRESS']) {
+                return True;
+            }
+        }
+        return False;
     }
 
     /**
-     * get the network address based on the network mask
+     * calculate the network address based on the given ip address and the network mask
      *
-     * @param $ipAddress
+     * @param string $ipAddress
+     * @param string $ipNetworkMask
      * @return int
      */
-    static public function getIpNetworkAddress($ipAddress="") {
+    static public function getNetworkAddress($ipAddress = "", $ipNetworkMask = "")
+    {
         if (!$ipAddress) {
-            $ipAddress = self::getIP();
+            $ipAddress = GeneralUtility::getIndpEnv('REMOTE_ADDR');
+        }
+        if (!$ipNetworkMask) {
+            $ipNetworkMask = ConfigurationUtility::getConfigurationKey("configuration.networkMask");
         }
         // convert the ip addresses from string to long
         $ipAddressLong = ip2long($ipAddress);
-        $ipNmaskLong = ip2long(self::ipNmask);
+        $ipNetworkMaskLong = ip2long($ipNetworkMask);
 
         //calculate network address
-        $ipNetworkAddress = $ipAddressLong & $ipNmaskLong;
+        $ipNetworkAddress = $ipAddressLong & $ipNetworkMaskLong;
         return long2ip($ipNetworkAddress);
     }
 }

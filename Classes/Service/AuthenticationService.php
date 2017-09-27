@@ -25,8 +25,10 @@
 
 namespace SKeuper\BackendIpLogin\Service;
 
+use SKeuper\BackendIpLogin\Domain\Repository\BackendUserRepository;
+use SKeuper\BackendIpLogin\Utility\ConfigurationUtility;
 use SKeuper\BackendIpLogin\Utility\IpUtility;
-use TYPO3\CMS\Core\Database\DatabaseConnection;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class AuthenticationService extends \TYPO3\CMS\Sv\AuthenticationService
 {
@@ -42,30 +44,18 @@ class AuthenticationService extends \TYPO3\CMS\Sv\AuthenticationService
             return false;
         }
 
-        // ToDo:
-        // add local network option and case
+        $displayAccounts = ConfigurationUtility::getConfigurationKey("option.displayAccounts");
 
-        // use case for the auto login, since we automatically continue from the backend username and password is empty
-        if ((string)$this->login['uident_text'] === '' && (string)$this->login['uname'] === '') {
-            /** @var DatabaseConnection $t3db */
-            $t3db = $GLOBALS['TYPO3_DB'];
-            $loginNetworkAddress = IpUtility::getIpNetworkAddress();
-            $whereClause = $this->db_user['check_pid_clause'] . ' AND ' . $this->db_user['enable_clause'];
-            $whereClause .= ' AND `be_users`.`tx_backendiplogin_last_login_ip_network` = ' .
-                $t3db->fullQuoteStr($loginNetworkAddress, "be_users");
-            // ToDo
-            // I got no idea what we should do on multiple accounts
-            // so far it prioritizes admin users and picks the first one based on last login timestamp
-            $dbRes = $t3db->exec_SELECTgetSingleRow(
-                '*',
-                $this->db_user['table'],
-                $whereClause,
-                '',
-                '`be_users`.`admin` DESC, `be_users`.`lastlogin` DESC'
-            );
-
-            if ($dbRes) {
-                return $dbRes;
+        // use case for the auto login, since we automatically continue from the backend with an empty username and password
+        if ((!$displayAccounts && (string)$this->login['uident_text'] === '' && (string)$this->login['uname'] === '') ||
+            ($displayAccounts && (string)$this->login['uname'] !== '' && (string)$this->login['uident_text'] === '')
+        ) {
+            if ($backendUsers = BackendUserRepository::getBackendUsers(
+                GeneralUtility::getIndpEnv('REMOTE_ADDR'),
+                IpUtility::getNetworkAddress(),
+                $this->login['uname'])
+            ) {
+                return $backendUsers[0];
             } else {
                 return false;
             }
@@ -83,13 +73,22 @@ class AuthenticationService extends \TYPO3\CMS\Sv\AuthenticationService
      */
     public function authUser(array $user)
     {
+        $displayAccounts = ConfigurationUtility::getConfigurationKey("option.displayAccounts");
+
         // use case for the auto login, since we automatically continue from the backend username and password is empty
-        if ((string)$this->login['uident_text'] === '' && (string)$this->login['uname'] === '') {
-            // ToDo
-            // differentiate between choosing from network address or ip address
-            $loginIp = IpUtility::getIP();
-            $loginNetworkAddress = IpUtility::getIpNetworkAddress();
-            return 200;
+        if ((!$displayAccounts && (string)$this->login['uident_text'] === '' && (string)$this->login['uname'] === '') ||
+            ($displayAccounts && (string)$this->login['uname'] !== '' && (string)$this->login['uident_text'] === '')
+        ) {
+            $useNetworkAddress = boolval(ConfigurationUtility::getConfigurationKey("configuration.useNetworkAddress"));
+            $allowLocalNetwork = boolval(ConfigurationUtility::getConfigurationKey("option.allowLocalNetwork"));
+            if (($useNetworkAddress && $user['tx_backendiplogin_last_login_ip_network'] === IpUtility::getNetworkAddress())
+                || (!$useNetworkAddress && $user['tx_backendiplogin_last_login_ip'] === GeneralUtility::getIndpEnv('REMOTE_ADDR'))
+                || ($allowLocalNetwork && IpUtility::isLocalNetworkAddress())
+            ) {
+                return 200;
+            } else {
+                return 100;
+            }
         } else {
             return 100;
         }
