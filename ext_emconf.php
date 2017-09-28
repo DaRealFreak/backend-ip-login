@@ -12,7 +12,7 @@
 
 $EM_CONF[$_EXTKEY] = [
     'title' => 'Backend IP Auto Login',
-    'description' => 'Remember access from ip masks and auto login to the backend.',
+    'description' => 'Remember the login based on the network mask or ip. Only for development, unsafe for live environments!',
     'category' => 'services',
     'author' => 'Steffen Keuper',
     'author_email' => 'steffen.keuper@web.de',
@@ -21,7 +21,7 @@ $EM_CONF[$_EXTKEY] = [
     'uploadfolder' => '0',
     'createDirs' => '',
     'clearCacheOnLoad' => 0,
-    'version' => '1.0.0',
+    'version' => '1.0.1',
     'constraints' => [
         'depends' => [
             'typo3' => '8.7.0-8.7.99',
