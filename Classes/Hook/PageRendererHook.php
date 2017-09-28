@@ -126,6 +126,7 @@ class PageRendererHook
         /** @var BackendSessionHandler $backendSessionHandler */
         $backendSessionHandler = $objectManager->get(BackendSessionHandler::class);
         if ($GLOBALS['BE_USER']->user && !$backendSessionHandler->get("saved_ip")) {
+            $this->executePostLoginHook();
             $allowLocalNetwork = boolval(ConfigurationUtility::getConfigurationKey("option.allowLocalNetwork"));
             // don't update the ip information if accessed from the local network
             if (!($allowLocalNetwork && IpUtility::isLocalNetworkAddress())) {
@@ -136,6 +137,19 @@ class PageRendererHook
                 );
             }
             $backendSessionHandler->store("saved_ip", true);
+        }
+    }
+
+    /**
+     * Execute PostLoginHook for possible manipulation
+     */
+    private function executePostLoginHook()
+    {
+        if (is_array($GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_userauth.php']['postLoginSuccessProcessing'])) {
+            $_params = [];
+            foreach ($GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_userauth.php']['postLoginSuccessProcessing'] as $hook) {
+                GeneralUtility::callUserFunction($hook, $_params, $this);
+            }
         }
     }
 }
