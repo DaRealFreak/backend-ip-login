@@ -25,15 +25,18 @@
 
 namespace SKeuper\BackendIpLogin\Domain\Repository;
 
+use Doctrine\DBAL\Query\QueryBuilder;
 use SKeuper\BackendIpLogin\Utility\ConfigurationUtility;
 use SKeuper\BackendIpLogin\Utility\IpUtility;
-use TYPO3\CMS\Core\Database\DatabaseConnection;
+use TYPO3\CMS\Core\Database\ConnectionPool;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Extbase\Persistence\Repository;
 
 /**
  * Class BackendUserRepository
  * @package SKeuper\BackendIpLogin\Domain\Repository
  */
-class BackendUserRepository extends \TYPO3\CMS\Extbase\Persistence\Repository
+class BackendUserRepository extends Repository
 {
     /**
      * check if there is an existing backend user with the current settings/ip informations
@@ -43,15 +46,15 @@ class BackendUserRepository extends \TYPO3\CMS\Extbase\Persistence\Repository
      * @param string $username
      * @return array
      */
-    public static function getBackendUsers($loginIpAddress="", $loginNetworkAddress="", $username="")
+    public static function getBackendUsers($loginIpAddress = "", $loginNetworkAddress = "", $username = "")
     {
-        /** @var DatabaseConnection $t3db */
-        $t3db = $GLOBALS['TYPO3_DB'];
-        $whereCondition = '(`be_users`.`deleted` = 0) 
-            AND (`be_users`.`disable` = 0) 
-            AND (`be_users`.`starttime` <= ' . (string)time() . ') 
-            AND ((`be_users`.`endtime` = 0) OR (`be_users`.`endtime` > ' . (string)time() . ')) 
-            AND (`be_users`.`pid` = 0)';
+        /** @var QueryBuilder $queryBuilder */
+        $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable('be_users');
+        $query = $queryBuilder
+            ->select('*')
+            ->from('be_users')
+            ->orderBy('admin', 'DESC')
+            ->addOrderBy('lastlogin', 'DESC');
 
         $useNetworkAddress = boolval(ConfigurationUtility::getConfigurationKey("configuration.useNetworkAddress"));
         $allowLocalNetwork = boolval(ConfigurationUtility::getConfigurationKey("option.allowLocalNetwork"));
@@ -64,26 +67,26 @@ class BackendUserRepository extends \TYPO3\CMS\Extbase\Persistence\Repository
 
         if (!$isLocalNetwork) {
             if ($useNetworkAddress) {
-                $whereCondition .= ' AND `be_users`.`tx_backendiplogin_last_login_ip_network` = ' .
-                    $t3db->fullQuoteStr($loginNetworkAddress, "be_users");
+                $query->andWhere($queryBuilder->expr()->eq(
+                    'tx_backendiplogin_last_login_ip_network',
+                    $queryBuilder->createNamedParameter($loginNetworkAddress, \PDO::PARAM_STR))
+                );
             } elseif (!$useNetworkAddress) {
-                $whereCondition .= ' AND `be_users`.`tx_backendiplogin_last_login_ip` = ' .
-                    $t3db->fullQuoteStr($loginIpAddress, "be_users");
+                $query->andWhere($queryBuilder->expr()->eq(
+                    'tx_backendiplogin_last_login_ip',
+                    $queryBuilder->createNamedParameter($loginIpAddress, \PDO::PARAM_STR))
+                );
             }
         }
+
         if ($username) {
-            $whereCondition .= ' AND `be_users`.`username` = ' .
-                $t3db->fullQuoteStr($username, "be_users");
+            $query->andWhere($queryBuilder->expr()->eq(
+                'username',
+                $queryBuilder->createNamedParameter($username, \PDO::PARAM_STR))
+            );
         }
 
-        $dbRes = $t3db->exec_SELECTgetRows(
-            "*",
-            "be_users",
-            $whereCondition,
-            "",
-            "`be_users`.`admin` DESC, `be_users`.`lastlogin` DESC"
-        );
-        return $dbRes;
+        return $query->execute()->fetchAll();
     }
 
     /**
@@ -92,20 +95,17 @@ class BackendUserRepository extends \TYPO3\CMS\Extbase\Persistence\Repository
      * @param string|int $uid
      * @param string $ipAddress
      * @param string $ipNetworkAddress
-     * @return bool
      */
     public static function updateIpInformation($uid, $ipAddress, $ipNetworkAddress)
     {
-        /** @var DatabaseConnection $t3db */
-        $t3db = $GLOBALS['TYPO3_DB'];
-        $res = $t3db->exec_UPDATEquery(
-            "be_users bu",
-            "bu.uid = " . (int)$uid,
-            array(
-                "tx_backendiplogin_last_login_ip" => $ipAddress,
-                "tx_backendiplogin_last_login_ip_network" => $ipNetworkAddress
-            )
-        );
-        return $res;
+        /** @var QueryBuilder $queryBuilder */
+        $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable('be_users');
+        $queryBuilder->update('be_users')
+            ->set('tx_backendiplogin_last_login_ip', $ipAddress)
+            ->set('tx_backendiplogin_last_login_ip_network', $ipNetworkAddress)
+            ->where($queryBuilder->expr()->eq(
+                'uid',
+                $queryBuilder->createNamedParameter($uid, \PDO::PARAM_STR)))
+            ->execute();
     }
 }
