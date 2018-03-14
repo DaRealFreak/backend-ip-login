@@ -1,8 +1,11 @@
 <?php
+
+namespace SKeuper\BackendIpLogin\Domain\Session;
+
 /***************************************************************
  *  Copyright notice
  *
- *  (c) 2017 Steffen Keuper <steffen.keuper@web.de>
+ *  (c) 2017-2018 Steffen Keuper <steffen.keuper@web.de>
  *
  *  All rights reserved
  *
@@ -22,9 +25,6 @@
  *
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
-
-namespace SKeuper\BackendIpLogin\Domain\Session;
-
 
 use TYPO3\CMS\Core\Authentication\AbstractUserAuthentication;
 use TYPO3\CMS\Extbase\Persistence\Repository;

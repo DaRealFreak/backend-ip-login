@@ -1,9 +1,11 @@
 <?php
+namespace SKeuper\BackendIpLogin\Component;
+
 /***************************************************************
  *
  *  Copyright notice
  *
- *  (c) 2016 Steffen keuper <steffen.keuper@web.de>,
+ *  (c) 2016-2018 Steffen keuper <steffen.keuper@web.de>,
  *           Ruben Pascal Abel <ruben.p.abel@gmail.com>
  *
  *  All rights reserved
@@ -24,8 +26,6 @@
  *
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
-
-namespace SKeuper\BackendIpLogin\Component;
 
 use SKeuper\BackendIpLogin\Utility\ReflectionUtility;
 
@@ -49,7 +49,11 @@ trait HookRegisterComponent
             # dirty but can't use the trait within a function
             $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS'][$library][$hook][] = __CLASS__ . "->" . $function;
         } else {
-            $classConstants = ReflectionUtility::getConstants(__CLASS__);
+            try {
+                $classConstants = ReflectionUtility::getConstants(__CLASS__);
+            } catch (\ReflectionException $e) {
+                $classConstants = [];
+            }
             if (array_key_exists('associations', $classConstants)) {
                 $associations = $classConstants['associations'];
                 foreach ($associations as $library => $hooks) {
@@ -87,7 +91,11 @@ trait HookRegisterComponent
                 }
             }
         } else {
-            $classConstants = ReflectionUtility::getConstants(__CLASS__);
+            try {
+                $classConstants = ReflectionUtility::getConstants(__CLASS__);
+            } catch (\ReflectionException $e) {
+                $classConstants = [];
+            }
             if (array_key_exists('associations', $classConstants)) {
                 $associations = $classConstants['associations'];
                 foreach ($associations as $library => $hooks) {

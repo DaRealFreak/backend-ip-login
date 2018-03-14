@@ -1,8 +1,11 @@
 <?php
+
+namespace SKeuper\BackendIpLogin\Service;
+
 /***************************************************************
  *  Copyright notice
  *
- *  (c) 2017 Steffen Keuper <steffen.keuper@web.de>
+ *  (c) 2017-2018 Steffen Keuper <steffen.keuper@web.de>
  *
  *  All rights reserved
  *
@@ -22,8 +25,6 @@
  *
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
-
-namespace SKeuper\BackendIpLogin\Service;
 
 use SKeuper\BackendIpLogin\Domain\Repository\BackendUserRepository;
 use SKeuper\BackendIpLogin\Utility\ConfigurationUtility;

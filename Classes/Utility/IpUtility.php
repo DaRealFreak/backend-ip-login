@@ -1,8 +1,11 @@
 <?php
+
+namespace SKeuper\BackendIpLogin\Utility;
+
 /***************************************************************
  *  Copyright notice
  *
- *  (c) 2017 Steffen Keuper <steffen.keuper@web.de>
+ *  (c) 2017-2018 Steffen Keuper <steffen.keuper@web.de>
  *
  *  All rights reserved
  *
@@ -22,8 +25,6 @@
  *
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
-
-namespace SKeuper\BackendIpLogin\Utility;
 
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
@@ -62,7 +63,7 @@ class IpUtility
         );
 
         // prefer outer proxy over internal ip address
-        $clientIp = $_SERVER['HTTP_X_FORWARDED_FOR'] ? $_SERVER['HTTP_X_FORWARDED_FOR']: $_SERVER['REMOTE_ADDR'];
+        $clientIp = $_SERVER['HTTP_X_FORWARDED_FOR'] ? $_SERVER['HTTP_X_FORWARDED_FOR'] : $_SERVER['REMOTE_ADDR'];
         if (!$clientIp) {
             return False;
         }

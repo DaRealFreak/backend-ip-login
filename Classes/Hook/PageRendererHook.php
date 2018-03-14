@@ -1,8 +1,11 @@
 <?php
+
+namespace SKeuper\BackendIpLogin\Hook;
+
 /***************************************************************
  *  Copyright notice
  *
- *  (c) 2017 Steffen Keuper <steffen.keuper@web.de>
+ *  (c) 2017-2018 Steffen Keuper <steffen.keuper@web.de>
  *
  *  All rights reserved
  *
@@ -23,7 +26,6 @@
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
-namespace SKeuper\BackendIpLogin\Hook;
 
 use SKeuper\BackendIpLogin\Domain\Repository\BackendUserRepository;
 use SKeuper\BackendIpLogin\Domain\Session\BackendSessionHandler;
@@ -56,6 +58,9 @@ class PageRendererHook
     );
 
     /**
+     * The pageRendererPreProcess hook.
+     * Here we check the TYPO3 version and inject our additional HTML/Javascript code to modify the login page
+     *
      * @param $parameters
      * @param $Obj
      */

@@ -1,8 +1,11 @@
 <?php
+
+namespace SKeuper\BackendIpLogin\Utility;
+
 /***************************************************************
  *  Copyright notice
  *
- *  (c) 2017 Steffen Keuper <steffen.keuper@web.de>
+ *  (c) 2017-2018 Steffen Keuper <steffen.keuper@web.de>
  *
  *  All rights reserved
  *
@@ -23,7 +26,7 @@
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
-namespace SKeuper\BackendIpLogin\Utility;
+use TYPO3\CMS\Core\SingletonInterface;
 
 /**
  * reflection utility
@@ -31,14 +34,16 @@ namespace SKeuper\BackendIpLogin\Utility;
  * Class ReflectionUtility
  * @package SKeuper\BackendIpLogin\Utility
  */
-class ReflectionUtility implements \TYPO3\CMS\Core\SingletonInterface
+class ReflectionUtility implements SingletonInterface
 {
 
     /**
      * @param $className
      * @return array
+     * @throws \ReflectionException
      */
-    public static function getConstants($className) {
+    public static function getConstants($className)
+    {
         $oClass = new \ReflectionClass($className);
         return $oClass->getConstants();
     }
