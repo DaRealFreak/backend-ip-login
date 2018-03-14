@@ -1,8 +1,11 @@
 <?php
+
+namespace SKeuper\BackendIpLogin\Utility;
+
 /***************************************************************
  *  Copyright notice
  *
- *  (c) 2017 Steffen Keuper <steffen.keuper@web.de>
+ *  (c) 2017-2018 Steffen Keuper <steffen.keuper@web.de>
  *
  *  All rights reserved
  *
@@ -23,10 +26,8 @@
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
-namespace SKeuper\BackendIpLogin\Utility;
-
-
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Core\Utility\VersionNumberUtility;
 use TYPO3\CMS\Extbase\Object\ObjectManager;
 
 class ConfigurationUtility
@@ -41,16 +42,35 @@ class ConfigurationUtility
      */
     public static function getConfigurationKey($key)
     {
-        /** @var ObjectManager $objectManager */
-        $objectManager = GeneralUtility::makeInstance(ObjectManager::class);
-        /** @var \TYPO3\CMS\Extensionmanager\Utility\ConfigurationUtility $configurationUtility */
-        $configurationUtility = $objectManager->get(\TYPO3\CMS\Extensionmanager\Utility\ConfigurationUtility::class);
-        $extensionConfiguration = $configurationUtility->getCurrentConfiguration(self::EXTKEY);
-
-        if (array_key_exists($key, $extensionConfiguration)) {
-            return $extensionConfiguration[$key]['value'];
+        $typo3Version = VersionNumberUtility::convertVersionNumberToInteger(TYPO3_version);
+        if ($typo3Version >= 9000000) {
+            /** @var array $extConf */
+            /** @noinspection PhpUnnecessaryFullyQualifiedNameInspection */
+            /** @noinspection PhpUndefinedClassInspection */
+            $extConf = GeneralUtility::makeInstance(\TYPO3\CMS\Core\Configuration\ExtensionConfiguration::class)->get(self::EXTKEY);
+            $items = explode('.', $key);
+            foreach ($items as $keyPart) {
+                if (!array_key_exists($keyPart, $extConf)) {
+                    return null;
+                }
+                if (end($items) == $keyPart) {
+                    return $extConf[$keyPart];
+                }
+                $extConf = $extConf[$keyPart];
+            }
+            return null;
         } else {
-            return NULL;
+            /** @var ObjectManager $objectManager */
+            $objectManager = GeneralUtility::makeInstance(ObjectManager::class);
+            /** @var array $extensionConfiguration */
+            /** @noinspection PhpUnnecessaryFullyQualifiedNameInspection */
+            /** @noinspection PhpUndefinedClassInspection */
+            $extensionConfiguration = $objectManager->get(\TYPO3\CMS\Extensionmanager\Utility\ConfigurationUtility::class)->getCurrentConfiguration(self::EXTKEY);
+            if (array_key_exists($key, $extensionConfiguration)) {
+                return $extensionConfiguration[$key]['value'];
+            } else {
+                return NULL;
+            }
         }
     }
 }
