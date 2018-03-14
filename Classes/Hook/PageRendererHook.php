@@ -76,13 +76,14 @@ class PageRendererHook
             $jsFiles = [];
             $typo3Version = VersionNumberUtility::convertVersionNumberToInteger(TYPO3_version);
             if ($typo3Version >= 4000000 and $typo3Version < 6000000) {
-                // 4.x is not supported anymore…
+                // 4.x is not supported anymore, probably only adding it if I personally need it
                 # TYPO3 4.x
                 $jsCode = "Ext.select('#t3-login-submit').elements[0].click();";
             } elseif ($typo3Version >= 6000000 and $typo3Version < 7000000) {
+                // 6.x is not supported anymore, probably only adding it if I personally need it
                 # TYPO3 6.x
                 $jsCode = "var lb = Ext.select('#logout-button input').elements[0];lb.setAttribute('disabled','disabled');lb.value = '" . GeneralUtility::getIndpEnv('REMOTE_ADDR') . "';";
-            } elseif ($typo3Version >= 7000000 and $typo3Version < 9000000) {
+            } elseif ($typo3Version >= 7000000 and $typo3Version < 10000000) {
                 # TYPO3 7.x & 8.x added a javascript check for username and password form field, easiest method to
                 # disable the check is removing the fields
                 $cssFiles = array(
