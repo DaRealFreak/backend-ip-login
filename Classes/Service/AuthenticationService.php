@@ -70,9 +70,9 @@ class AuthenticationService extends \TYPO3\CMS\Sv\AuthenticationService
      * Authenticate a user (Check various conditions for the user that might invalidate its authentication, eg. password match, domain, IP, etc.)
      *
      * @param array $user Data of user.
-     * @return boolean
+     * @return int
      */
-    public function authUser(array $user)
+    public function authUser(array $user): int
     {
         $displayAccounts = ConfigurationUtility::getConfigurationKey("option.displayAccounts");
 
