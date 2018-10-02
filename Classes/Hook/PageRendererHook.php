@@ -49,13 +49,13 @@ class PageRendererHook
     /*
      * you can define your hooks here, library -> hook -> function name
      */
-    const associations = array(
-        "t3lib/class.t3lib_pagerenderer.php" => array(
-            "render-preProcess" => array(
+    const associations = [
+        "t3lib/class.t3lib_pagerenderer.php" => [
+            "render-preProcess" => [
                 "pageRendererPreProcessHook"
-            )
-        )
-    );
+            ]
+        ]
+    ];
 
     /**
      * The pageRendererPreProcess hook.
@@ -91,11 +91,9 @@ class PageRendererHook
             } elseif ($typo3Version >= 7000000 and $typo3Version < 10000000) {
                 # TYPO3 7.x & 8.x added a javascript check for username and password form field, easiest method to
                 # disable the check is removing the fields
-                $cssFiles = array(
-                    "typo3conf/ext/backend_ip_login/Resources/Public/css/login.css",
-                    "typo3conf/ext/backend_ip_login/Resources/Public/bootstrap/3.3.5/css/bootstrap.min.css",
-                    "typo3conf/ext/backend_ip_login/Resources/Public/bootstrap/3.3.5/css/bootstrap-theme.min.css",
-                );
+                $cssFiles = [
+                    "EXT:backend_ip_login/Resources/Public/css/login.css",
+                ];
                 if (ConfigurationUtility::getConfigurationKey("option.displayAccounts")) {
                     $jsCode = @file_get_contents(PATH_site . "typo3conf/ext/backend_ip_login/Resources/Public/js/login.js");
                     foreach (array_reverse($backendUsers) as $backendUser) {
