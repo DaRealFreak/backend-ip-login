@@ -1,12 +1,10 @@
-.nav-tabs>li {
+.nav-tabs > li {
     float: none;
     display: inline-block;
 }
 
-.logincontainer {
-    min-height: 200px;
-}
-
 .tab-content {
-  padding: 15px;
+    padding: 5px;
+    max-height: 200px;
+    overflow: auto;
 }
