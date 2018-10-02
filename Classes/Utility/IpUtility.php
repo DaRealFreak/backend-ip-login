@@ -44,23 +44,23 @@ class IpUtility
     {
         // private IP ranges; see RFC 6890 or https://en.wikipedia.org/wiki/Private_network#Private_IPv4_address_spaces
         // ip ranges used for private usage according to https://tools.ietf.org/html/rfc1918
-        $localNetworkRules = array(
-            array(
+        $localNetworkRules = [
+            [
                 // 10/8
                 "NETWORK_ADDRESS" => "10.0.0.0",
                 "NETWORK_MASK" => "255.0.0.0"
-            ),
-            array(
+            ],
+            [
                 // 192.168/16
                 "NETWORK_ADDRESS" => "192.168.0.0",
                 "NETWORK_MASK" => "255.255.0.0"
-            ),
-            array(
+            ],
+            [
                 // 172.16/12
                 "NETWORK_ADDRESS" => "172.16.0.0",
                 "NETWORK_MASK" => "255.240.0.0"
-            )
-        );
+            ]
+        ];
 
         // prefer outer proxy over internal ip address
         $clientIp = $_SERVER['HTTP_X_FORWARDED_FOR'] ? $_SERVER['HTTP_X_FORWARDED_FOR'] : $_SERVER['REMOTE_ADDR'];
