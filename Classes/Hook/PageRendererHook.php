@@ -80,29 +80,19 @@ class PageRendererHook
             $cssFiles = [];
             $jsFiles = [];
             $typo3Version = VersionNumberUtility::convertVersionNumberToInteger(TYPO3_version);
-            if ($typo3Version >= 4000000 and $typo3Version < 6000000) {
-                // 4.x is not supported anymore, probably only adding it if I personally need it
-                # TYPO3 4.x
-                $jsCode = "Ext.select('#t3-login-submit').elements[0].click();";
-            } elseif ($typo3Version >= 6000000 and $typo3Version < 7000000) {
-                // 6.x is not supported anymore, probably only adding it if I personally need it
-                # TYPO3 6.x
-                $jsCode = "var lb = Ext.select('#logout-button input').elements[0];lb.setAttribute('disabled','disabled');lb.value = '" . GeneralUtility::getIndpEnv('REMOTE_ADDR') . "';";
-            } elseif ($typo3Version >= 7000000 and $typo3Version < 10000000) {
-                # TYPO3 7.x & 8.x added a javascript check for username and password form field, easiest method to
-                # disable the check is removing the fields
+            if ($typo3Version >= 7000000 && $typo3Version < 10000000) {
                 $cssFiles = [
                     "EXT:backend_ip_login/Resources/Public/css/login.css",
                 ];
                 if (ConfigurationUtility::getConfigurationKey("option.displayAccounts")) {
-                    $jsCode = @file_get_contents(PATH_site . "typo3conf/ext/backend_ip_login/Resources/Public/js/login.js");
+                    $jsCode = @file_get_contents(GeneralUtility::getFileAbsFileName('EXT:backend_ip_login/Resources/Public/js/list_accounts.js'));
                     foreach (array_reverse($backendUsers) as $backendUser) {
-                        $jsCode .= sprintf("userform.prepend('%s');",
-                            '<button type="button" class="btn btn-block btn-login">' . $backendUser['username'] . '</button>'
+                        $jsCode .= sprintf("userform.insertBefore(htmlToElement('%s'), userform.firstChild);",
+                            '<button type="button" class="btn btn-block btn-login btn-autologin">' . $backendUser['username'] . '</button>'
                         );
                     }
                 } else {
-                    $jsCode = "$('#t3-login-username-section').remove();$('#t3-login-password-section').remove();$('#t3-login-submit').click();";
+                    $jsFiles[] = 'EXT:backend_ip_login/Resources/Public/js/auto_login.js';
                 }
             } else {
                 # unknown number, don't take any action in the template
