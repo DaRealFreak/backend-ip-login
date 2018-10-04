@@ -7,7 +7,7 @@ configuration {
 }
 option {
     # cat=Options; type=boolean; label=LLL:EXT:backend_ip_login/Resources/Private/Language/locallang_em.xlf:backendiplogin.config.displayAccounts
-    displayAccounts = 0
+    displayAccounts = 1
 
     # cat=Options; type=boolean; label=LLL:EXT:backend_ip_login/Resources/Private/Language/locallang_em.xlf:backendiplogin.config.allowLocalNetwork
     allowLocalNetwork = 1
