@@ -1,7 +1,7 @@
 {
   "name": "skeuper/backend-ip-login",
   "type": "typo3-cms-extension",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "Remember the login based on the network mask or ip. Only for development, unsafe for live environments!",
   "authors": [
     {
@@ -10,7 +10,8 @@
     }
   ],
   "require": {
-    "typo3/cms-core": "^8.7|| >=9.0.0 <10.0.0"
+    "typo3/cms-core": ">=8.7.0 < 9.5.99",
+    "ext-pdo": "*"
   },
   "autoload": {
     "psr-4": {
