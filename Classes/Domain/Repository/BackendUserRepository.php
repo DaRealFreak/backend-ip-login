@@ -87,6 +87,11 @@ class BackendUserRepository extends Repository
             );
         }
 
+        $query->andWhere($queryBuilder->expr()->neq(
+            'username',
+            $queryBuilder->createNamedParameter('_cli_', \PDO::PARAM_STR)
+        ));
+
         return $query->execute()->fetchAll();
     }
 
