@@ -37,10 +37,10 @@ class ConfigurationUtility
     /**
      * return the value of the requested key if set
      *
-     * @param $key
-     * @return mixed|NULL
+     * @param string $key
+     * @return string
      */
-    public static function getConfigurationKey($key)
+    public static function getConfigurationKey(string $key): ?string
     {
         $typo3Version = VersionNumberUtility::convertVersionNumberToInteger(TYPO3_version);
         if ($typo3Version >= 9000000) {
@@ -69,7 +69,7 @@ class ConfigurationUtility
             if (array_key_exists($key, $extensionConfiguration)) {
                 return $extensionConfiguration[$key]['value'];
             } else {
-                return NULL;
+                return null;
             }
         }
     }

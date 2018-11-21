@@ -40,7 +40,7 @@ class IpUtility
      *
      * @return bool
      */
-    static public function isLocalNetworkAddress()
+    static public function isLocalNetworkAddress(): bool
     {
         // private IP ranges; see RFC 6890 or https://en.wikipedia.org/wiki/Private_network#Private_IPv4_address_spaces
         // ip ranges used for private usage according to https://tools.ietf.org/html/rfc1918
@@ -82,9 +82,9 @@ class IpUtility
      *
      * @param string $ipAddress
      * @param string $ipNetworkMask
-     * @return int
+     * @return string
      */
-    static public function getNetworkAddress($ipAddress = "", $ipNetworkMask = "")
+    static public function getNetworkAddress(string $ipAddress = '', string $ipNetworkMask = ''): string
     {
         if (!$ipAddress) {
             $ipAddress = GeneralUtility::getIndpEnv('REMOTE_ADDR');

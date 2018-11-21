@@ -38,11 +38,11 @@ class ReflectionUtility implements SingletonInterface
 {
 
     /**
-     * @param $className
+     * @param string $className
      * @return array
      * @throws \ReflectionException
      */
-    public static function getConstants($className)
+    public static function getConstants(string $className): array
     {
         $oClass = new \ReflectionClass($className);
         return $oClass->getConstants();

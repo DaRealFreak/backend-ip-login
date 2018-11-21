@@ -64,7 +64,7 @@ class PageRendererHook
      * @param $parameters
      * @param $Obj
      */
-    public function pageRendererPreProcessHook($parameters, &$Obj)
+    public function pageRendererPreProcessHook(array $parameters, PageRenderer &$Obj)
     {
         /** @var ObjectManager $objectManager */
         $objectManager = GeneralUtility::makeInstance(ObjectManager::class);
@@ -137,7 +137,7 @@ class PageRendererHook
     /**
      * Execute PostLoginHook for possible manipulation
      */
-    private function executePostLoginHook()
+    private function executePostLoginHook(): void
     {
         if (is_array($GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_userauth.php']['postLoginSuccessProcessing'])) {
             $_params = [];

@@ -39,7 +39,7 @@ class BackendSessionHandler extends Repository
     /**
      * @param string $storageKey
      */
-    public function setStorageKey($storageKey)
+    public function setStorageKey(string $storageKey): void
     {
         $this->storageKey = $storageKey;
     }
@@ -48,7 +48,7 @@ class BackendSessionHandler extends Repository
      * @param string $key
      * @param mixed $value
      */
-    public function store($key, $value)
+    public function store(string $key, $value): void
     {
         /** @var AbstractUserAuthentication $backendUser */
         $backendUser = $GLOBALS['BE_USER'];
@@ -60,7 +60,7 @@ class BackendSessionHandler extends Repository
     /**
      * @param string $key
      */
-    public function delete($key)
+    public function delete(string $key): void
     {
         /** @var AbstractUserAuthentication $backendUser */
         $backendUser = $GLOBALS['BE_USER'];
@@ -73,11 +73,11 @@ class BackendSessionHandler extends Repository
      * @param string $key
      * @return mixed
      */
-    public function get($key)
+    public function get(string $key)
     {
         $backendUser = $GLOBALS['BE_USER'];
         $data = $backendUser->getSessionData($this->storageKey);
-        return isset($data[$key]) ? $data[$key] : NULL;
+        return isset($data[$key]) ? $data[$key] : null;
     }
 
 }

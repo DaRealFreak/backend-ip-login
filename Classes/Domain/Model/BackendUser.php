@@ -38,19 +38,19 @@ class BackendUser extends \TYPO3\CMS\Core\Authentication\BackendUserAuthenticati
      *
      * @var string
      */
-    protected $lastLoginIp;
+    protected $lastLoginIp = "";
 
     /**
      * network ip of the last successful login
      *
      * @var string
      */
-    protected $lastLoginIpNetwork;
+    protected $lastLoginIpNetwork = "";
 
     /**
      * @return string
      */
-    public function getLastLoginIp()
+    public function getLastLoginIp(): string
     {
         return $this->lastLoginIp;
     }
@@ -58,7 +58,7 @@ class BackendUser extends \TYPO3\CMS\Core\Authentication\BackendUserAuthenticati
     /**
      * @param string $lastLoginIp
      */
-    public function setLastLoginIp($lastLoginIp)
+    public function setLastLoginIp(string $lastLoginIp): void
     {
         $this->lastLoginIp = $lastLoginIp;
     }
@@ -66,7 +66,7 @@ class BackendUser extends \TYPO3\CMS\Core\Authentication\BackendUserAuthenticati
     /**
      * @return string
      */
-    public function getLastLoginIpNetwork()
+    public function getLastLoginIpNetwork(): string
     {
         return $this->lastLoginIpNetwork;
     }
@@ -74,11 +74,9 @@ class BackendUser extends \TYPO3\CMS\Core\Authentication\BackendUserAuthenticati
     /**
      * @param string $lastLoginIpNetwork
      */
-    public function setLastLoginIpNetwork($lastLoginIpNetwork)
+    public function setLastLoginIpNetwork(string $lastLoginIpNetwork): void
     {
         $this->lastLoginIpNetwork = $lastLoginIpNetwork;
     }
 
 }
-
-?>

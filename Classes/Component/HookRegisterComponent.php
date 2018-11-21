@@ -43,7 +43,7 @@ trait HookRegisterComponent
      * @param string $hook
      * @param $function
      */
-    public static function register($library = '', $hook = '', $function = '')
+    public static function register(string $library = '', string $hook = '', string $function = ''): void
     {
         if ($library && $hook && $function) {
             # dirty but can't use the trait within a function
@@ -81,7 +81,7 @@ trait HookRegisterComponent
      * @param string $hook
      * @param string $function
      */
-    public static function unregister($library = '', $hook = '', $function = '')
+    public static function unregister(string $library = '', string $hook = '', string $function = ''): void
     {
         if ($library && $hook && $function) {
             # dirty but can't use the trait within a function

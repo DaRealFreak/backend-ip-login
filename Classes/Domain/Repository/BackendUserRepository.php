@@ -47,7 +47,7 @@ class BackendUserRepository extends Repository
      * @param string $username
      * @return array
      */
-    public static function getBackendUsers($loginIpAddress = "", $loginNetworkAddress = "", $username = "")
+    public static function getBackendUsers(string $loginIpAddress, string $loginNetworkAddress, string $username = ''): array
     {
         /** @var QueryBuilder $queryBuilder */
         $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable('be_users');
@@ -102,7 +102,7 @@ class BackendUserRepository extends Repository
      * @param string $ipAddress
      * @param string $ipNetworkAddress
      */
-    public static function updateIpInformation($uid, $ipAddress, $ipNetworkAddress)
+    public static function updateIpInformation(int $uid, string $ipAddress, string $ipNetworkAddress): void
     {
         /** @var QueryBuilder $queryBuilder */
         $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable('be_users');
@@ -111,7 +111,7 @@ class BackendUserRepository extends Repository
             ->set('tx_backendiplogin_last_login_ip_network', $ipNetworkAddress)
             ->where($queryBuilder->expr()->eq(
                 'uid',
-                $queryBuilder->createNamedParameter($uid, \PDO::PARAM_STR)))
+                $queryBuilder->createNamedParameter($uid, \PDO::PARAM_INT)))
             ->execute();
     }
 }
