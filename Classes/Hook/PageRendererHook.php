@@ -91,6 +91,7 @@ class PageRendererHook
                             '<button type="button" class="btn btn-block btn-login btn-autologin">' . $backendUser['username'] . '</button>'
                         );
                     }
+                    $jsCode .= "document.getElementsByClassName('tab-content')[0].scrollTop = 0";
                 } else {
                     $jsFiles[] = 'EXT:backend_ip_login/Resources/Public/js/auto_login.js';
                 }
