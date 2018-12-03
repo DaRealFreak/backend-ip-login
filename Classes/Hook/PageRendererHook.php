@@ -91,7 +91,7 @@ class PageRendererHook
                             '<button type="button" class="btn btn-block btn-login btn-autologin">' . $backendUser['username'] . '</button>'
                         );
                     }
-                    $jsCode .= "document.getElementsByClassName('tab-content')[0].scrollTop = 0";
+                    $jsCode .= @file_get_contents(GeneralUtility::getFileAbsFileName('EXT:backend_ip_login/Resources/Public/js/scroll_top.js'));
                 } else {
                     $jsFiles[] = 'EXT:backend_ip_login/Resources/Public/js/auto_login.js';
                 }
