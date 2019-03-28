@@ -69,7 +69,7 @@ class IpUtility
         }
 
         foreach ($localNetworkRules as $localNetworkRule) {
-            $networkAddress = self::getNetworkAddress($_SERVER['HTTP_X_FORWARDED_FOR'], $localNetworkRule['NETWORK_MASK']);
+            $networkAddress = self::getNetworkAddress($clientIp, $localNetworkRule['NETWORK_MASK']);
             if ($networkAddress == $localNetworkRule['NETWORK_ADDRESS']) {
                 return True;
             }
