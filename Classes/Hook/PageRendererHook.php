@@ -27,12 +27,14 @@ namespace SKeuper\BackendIpLogin\Hook;
  ***************************************************************/
 
 use Doctrine\DBAL\Driver\Exception;
+use Psr\Http\Message\ServerRequestInterface;
 use SKeuper\BackendIpLogin\Domain\Repository\BackendUserRepository;
 use SKeuper\BackendIpLogin\Domain\Session\BackendSessionHandler;
 use SKeuper\BackendIpLogin\Utility\ConfigurationUtility;
 use SKeuper\BackendIpLogin\Utility\IpUtility;
 use TYPO3\CMS\Core\Configuration\Exception\ExtensionConfigurationExtensionNotConfiguredException;
 use TYPO3\CMS\Core\Configuration\Exception\ExtensionConfigurationPathDoesNotExistException;
+use TYPO3\CMS\Core\Http\ApplicationType;
 use TYPO3\CMS\Core\Page\PageRenderer;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
@@ -51,9 +53,16 @@ class PageRendererHook
      * @throws ExtensionConfigurationPathDoesNotExistException
      * @throws Exception
      */
-    public function pageRendererPreProcessHook(array $parameters, PageRenderer $pageRenderer)
+    public function pageRendererPreProcessHook(array $parameters, PageRenderer $pageRenderer): void
     {
-        if (TYPO3_MODE == 'BE' && !$GLOBALS['BE_USER']->user
+        $isBackend = ($GLOBALS['TYPO3_REQUEST'] ?? null) instanceof ServerRequestInterface
+            && ApplicationType::fromRequest($GLOBALS['TYPO3_REQUEST'])->isBackend();
+        // only apply hook in the backend
+        if (!$isBackend) {
+            return;
+        }
+
+        if (!$GLOBALS['BE_USER']->user
             && $backendUsers = BackendUserRepository::getBackendUsers(
                 GeneralUtility::getIndpEnv('REMOTE_ADDR'),
                 IpUtility::getNetworkAddress()
