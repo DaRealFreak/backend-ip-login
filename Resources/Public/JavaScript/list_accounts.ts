@@ -97,6 +97,20 @@ class BackendIpLogin {
                         targetedTab.classList.add('active')
                     }
                 }
+
+                const parentListElement = tabElement.parentElement as HTMLElement
+                const tabRole = parentListElement.getAttribute('role') as string
+                document.querySelectorAll(`ul > li[role="${tabRole}"]`).forEach((element) => {
+                    // disable highlighting on all tabs
+                    if (element.classList.contains('active')) {
+                        element.classList.remove('active')
+                    }
+                })
+
+                // highlight current tab again
+                if (!parentListElement.classList.contains('active')) {
+                    parentListElement.classList.add('active')
+                }
             })
         })
     }

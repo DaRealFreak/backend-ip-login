@@ -53,6 +53,16 @@ var BackendIpLogin = (function () {
                         targetedTab.classList.add('active');
                     }
                 }
+                var parentListElement = tabElement.parentElement;
+                var tabRole = parentListElement.getAttribute('role');
+                document.querySelectorAll("ul > li[role=\"".concat(tabRole, "\"]")).forEach(function (element) {
+                    if (element.classList.contains('active')) {
+                        element.classList.remove('active');
+                    }
+                });
+                if (!parentListElement.classList.contains('active')) {
+                    parentListElement.classList.add('active');
+                }
             });
         });
     };
