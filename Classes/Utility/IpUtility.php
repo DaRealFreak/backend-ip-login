@@ -30,10 +30,6 @@ use TYPO3\CMS\Core\Configuration\Exception\ExtensionConfigurationExtensionNotCon
 use TYPO3\CMS\Core\Configuration\Exception\ExtensionConfigurationPathDoesNotExistException;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
-/**
- * Class IpUtility
- * @package SKeuper\BackendIpLogin\Utility
- */
 class IpUtility
 {
 

@@ -25,6 +25,7 @@ namespace SKeuper\BackendIpLogin\Hook;
  *
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
+
 use Doctrine\DBAL\Driver\Exception;
 use SKeuper\BackendIpLogin\Domain\Repository\BackendUserRepository;
 use SKeuper\BackendIpLogin\Domain\Session\BackendSessionHandler;
@@ -102,7 +103,6 @@ class PageRendererHook
         /** @var BackendSessionHandler $backendSessionHandler */
         $backendSessionHandler = GeneralUtility::makeInstance(BackendSessionHandler::class);
         if ($GLOBALS['BE_USER']->user && !$backendSessionHandler->get("saved_ip")) {
-            $this->executePostLoginHook();
             $allowLocalNetwork = boolval(ConfigurationUtility::getConfigurationKey("option.allowLocalNetwork"));
             // don't update the ip information if accessed from the local network
             if (!($allowLocalNetwork && IpUtility::isLocalNetworkAddress())) {
@@ -113,19 +113,6 @@ class PageRendererHook
                 );
             }
             $backendSessionHandler->store("saved_ip", true);
-        }
-    }
-
-    /**
-     * Execute PostLoginHook for possible manipulation
-     */
-    private function executePostLoginHook(): void
-    {
-        if (is_array($GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_userauth.php']['postLoginSuccessProcessing'])) {
-            $_params = [];
-            foreach ($GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_userauth.php']['postLoginSuccessProcessing'] as $hook) {
-                GeneralUtility::callUserFunction($hook, $_params, $this);
-            }
         }
     }
 }
