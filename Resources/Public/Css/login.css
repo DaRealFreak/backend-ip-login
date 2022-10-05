@@ -1,0 +1,17 @@
+ul.nav-tabs > li {
+    margin: auto;
+    float: none;
+    display: inline-block;
+}
+
+ul.nav-tabs > li.active {
+    background-color: #fafafa;
+    border: 1px solid #cccccc;
+    color: white;
+}
+
+.tab-content {
+    padding: 5px;
+    max-height: 200px;
+    overflow: auto;
+}

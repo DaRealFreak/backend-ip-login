@@ -1,8 +1,11 @@
 <?php
+
+namespace SKeuper\BackendIpLogin\Domain\Model;
+
 /***************************************************************
  *  Copyright notice
  *
- *  (c) 2017-2018 Steffen Keuper <steffen.keuper@web.de>
+ *  (c) 2017-2022 Steffen Keuper <steffen.keuper@web.de>
  *
  *  All rights reserved
  *
@@ -23,29 +26,23 @@
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
-namespace SKeuper\BackendIpLogin\Domain\Model;
+use TYPO3\CMS\Core\Authentication\BackendUserAuthentication;
 
-/**
- * Extension for the BackendUserAuthentication model
- *
- * Class BackendUser
- * @package SKeuper\BackendIpLogin\Domain\Model
- */
-class BackendUser extends \TYPO3\CMS\Core\Authentication\BackendUserAuthentication
+class BackendUser extends BackendUserAuthentication
 {
     /**
      * ip of the last successful login
      *
      * @var string
      */
-    protected $lastLoginIp = "";
+    protected string $lastLoginIp = "";
 
     /**
      * network ip of the last successful login
      *
      * @var string
      */
-    protected $lastLoginIpNetwork = "";
+    protected string $lastLoginIpNetwork = "";
 
     /**
      * @return string

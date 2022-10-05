@@ -5,7 +5,7 @@ namespace SKeuper\BackendIpLogin\Domain\Session;
 /***************************************************************
  *  Copyright notice
  *
- *  (c) 2017-2018 Steffen Keuper <steffen.keuper@web.de>
+ *  (c) 2017-2022 Steffen Keuper <steffen.keuper@web.de>
  *
  *  All rights reserved
  *
@@ -34,15 +34,7 @@ class BackendSessionHandler extends Repository
     /**
      * @var string
      */
-    protected $storageKey = 'tx_backendiplogin';
-
-    /**
-     * @param string $storageKey
-     */
-    public function setStorageKey(string $storageKey): void
-    {
-        $this->storageKey = $storageKey;
-    }
+    protected string $storageKey = 'tx_backendiplogin';
 
     /**
      * @param string $key
@@ -75,9 +67,9 @@ class BackendSessionHandler extends Repository
      */
     public function get(string $key)
     {
+        /** @var AbstractUserAuthentication $backendUser */
         $backendUser = $GLOBALS['BE_USER'];
         $data = $backendUser->getSessionData($this->storageKey);
-        return isset($data[$key]) ? $data[$key] : null;
+        return $data[$key] ?? null;
     }
-
 }

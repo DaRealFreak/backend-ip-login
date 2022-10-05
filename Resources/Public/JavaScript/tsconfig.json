@@ -1,0 +1,16 @@
+{
+  "compilerOptions": {
+    "target": "es5",
+    "outDir": "./",
+    "noImplicitAny": true,
+    "strictNullChecks": true,
+    "module": "none",
+    "removeComments": true
+  },
+  "include": [
+    "**/*.ts"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
+}
