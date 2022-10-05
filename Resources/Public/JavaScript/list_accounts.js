@@ -37,10 +37,30 @@ var BackendIpLogin = (function () {
             }
         });
     };
+    BackendIpLogin.prototype.setTabFunctionality = function () {
+        document.querySelectorAll('ul.nav > li > a[href^="#"]').forEach(function (tabElement) {
+            tabElement.addEventListener('click', function () {
+                var tabSelector = tabElement.getAttribute('href');
+                var targetedTab = document.querySelector(tabSelector);
+                if (targetedTab !== null) {
+                    var targetedRole = (targetedTab.getAttribute('role') !== null ? targetedTab.getAttribute('role') : '');
+                    document.querySelectorAll("div[role=\"".concat(targetedRole, "\"]")).forEach(function (element) {
+                        if (element.classList.contains('active')) {
+                            element.classList.remove('active');
+                        }
+                    });
+                    if (!targetedTab.classList.contains('active')) {
+                        targetedTab.classList.add('active');
+                    }
+                }
+            });
+        });
+    };
     return BackendIpLogin;
 }());
 document.addEventListener('DOMContentLoaded', function () {
     var backendIpLogin = new BackendIpLogin();
     backendIpLogin.extendLoginForm();
     backendIpLogin.setLoginButtonBehaviour();
+    backendIpLogin.setTabFunctionality();
 });

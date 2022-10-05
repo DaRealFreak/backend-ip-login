@@ -74,10 +74,37 @@ class BackendIpLogin {
             }
         })
     }
+
+    /**
+     * in case of TYPO3 11+ there is no bootstrap.js loaded anymore, so minimalistic functionality for tabs
+     */
+    public setTabFunctionality (): void {
+        document.querySelectorAll('ul.nav > li > a[href^="#"]').forEach((tabElement: HTMLLinkElement) => {
+            tabElement.addEventListener('click', function () {
+                const tabSelector = tabElement.getAttribute('href') as string
+                const targetedTab = document.querySelector(tabSelector)
+                if (targetedTab !== null) {
+                    const targetedRole = (targetedTab.getAttribute('role') !== null ? targetedTab.getAttribute('role') : '') as string
+                    // hide all other elements with the same role
+                    document.querySelectorAll(`div[role="${targetedRole}"]`).forEach((element) => {
+                        if (element.classList.contains('active')) {
+                            element.classList.remove('active')
+                        }
+                    })
+
+                    // add active class if not already
+                    if (!targetedTab.classList.contains('active')) {
+                        targetedTab.classList.add('active')
+                    }
+                }
+            })
+        })
+    }
 }
 
 document.addEventListener('DOMContentLoaded', function () {
     const backendIpLogin = new BackendIpLogin()
     backendIpLogin.extendLoginForm()
     backendIpLogin.setLoginButtonBehaviour()
+    backendIpLogin.setTabFunctionality()
 })
