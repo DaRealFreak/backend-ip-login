@@ -3,22 +3,30 @@ if (!defined('TYPO3_MODE')) {
     die('Access denied.');
 }
 
-// Register base authentication service
-\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addService(
-    $_EXTKEY,
-    'auth',
-    \SKeuper\BackendIpLogin\Service\AuthenticationService::class,
-    array(
-        'title' => 'User authentication',
-        'description' => 'Authentication based on the saved ip/network address',
-        'subtype' => 'getUserBE,authUserBE',
-        'available' => TRUE,
-        'priority' => 80,
-        'quality' => 80,
-        'os' => '',
-        'exec' => '',
-        'className' => \SKeuper\BackendIpLogin\Service\AuthenticationService::class
-    )
-);
+call_user_func(
+    function () {
+        if (TYPO3_MODE === 'BE') {
+            // Register base authentication service
+            \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addService(
+                'backend_ip_login',
+                'auth',
+                \SKeuper\BackendIpLogin\Service\AuthenticationService::class,
+                [
+                    'title' => 'User authentication',
+                    'description' => 'Authentication based on the saved ip/network address',
+                    'subtype' => 'getUserBE,authUserBE',
+                    'available' => true,
+                    'priority' => 80,
+                    'quality' => 80,
+                    'os' => '',
+                    'exec' => '',
+                    'className' => \SKeuper\BackendIpLogin\Service\AuthenticationService::class
+                ]
+            );
 
-\SKeuper\BackendIpLogin\Hook\PageRendererHook::register();
+            // register page renderer hook to display during the login page
+            $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_pagerenderer.php']['render-preProcess'][]
+                = \SKeuper\BackendIpLogin\Hook\PageRendererHook::class . '->pageRendererPreProcessHook';
+        }
+    }
+);

@@ -7,14 +7,10 @@ $EM_CONF[$_EXTKEY] = [
     'author' => 'Steffen Keuper',
     'author_email' => 'steffen.keuper@web.de',
     'state' => 'alpha',
-    'internal' => '',
-    'uploadfolder' => '0',
-    'createDirs' => '',
-    'clearCacheOnLoad' => 0,
-    'version' => '1.0.8',
+    'version' => '2.0.0',
     'constraints' => [
         'depends' => [
-            'typo3' => '8.7.0-9.5.99',
+            'typo3' => '',
         ],
         'conflicts' => [],
         'suggests' => [],

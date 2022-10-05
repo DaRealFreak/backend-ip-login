@@ -5,7 +5,7 @@ namespace SKeuper\BackendIpLogin\Service;
 /***************************************************************
  *  Copyright notice
  *
- *  (c) 2017-2018 Steffen Keuper <steffen.keuper@web.de>
+ *  (c) 2017-2022 Steffen Keuper <steffen.keuper@web.de>
  *
  *  All rights reserved
  *
@@ -26,18 +26,24 @@ namespace SKeuper\BackendIpLogin\Service;
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
+use Doctrine\DBAL\Driver\Exception;
 use SKeuper\BackendIpLogin\Domain\Repository\BackendUserRepository;
 use SKeuper\BackendIpLogin\Utility\ConfigurationUtility;
 use SKeuper\BackendIpLogin\Utility\IpUtility;
+use TYPO3\CMS\Core\Configuration\Exception\ExtensionConfigurationExtensionNotConfiguredException;
+use TYPO3\CMS\Core\Configuration\Exception\ExtensionConfigurationPathDoesNotExistException;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
-class AuthenticationService extends \TYPO3\CMS\Sv\AuthenticationService
+class AuthenticationService extends \TYPO3\CMS\Core\Authentication\AuthenticationService
 {
     /**
      * if the username and password is empty try to select the user based on the
      * ip address or network address, else use the original function
      *
      * @return bool|array
+     * @throws ExtensionConfigurationExtensionNotConfiguredException
+     * @throws ExtensionConfigurationPathDoesNotExistException
+     * @throws Exception
      */
     public function getUser()
     {
@@ -71,6 +77,8 @@ class AuthenticationService extends \TYPO3\CMS\Sv\AuthenticationService
      *
      * @param array $user Data of user.
      * @return int
+     * @throws ExtensionConfigurationExtensionNotConfiguredException
+     * @throws ExtensionConfigurationPathDoesNotExistException
      */
     public function authUser(array $user): int
     {

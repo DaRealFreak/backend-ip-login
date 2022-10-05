@@ -5,7 +5,7 @@ namespace SKeuper\BackendIpLogin\Hook;
 /***************************************************************
  *  Copyright notice
  *
- *  (c) 2017-2018 Steffen Keuper <steffen.keuper@web.de>
+ *  (c) 2017-2022 Steffen Keuper <steffen.keuper@web.de>
  *
  *  All rights reserved
  *
@@ -25,93 +25,74 @@ namespace SKeuper\BackendIpLogin\Hook;
  *
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
-
-
+use Doctrine\DBAL\Driver\Exception;
 use SKeuper\BackendIpLogin\Domain\Repository\BackendUserRepository;
 use SKeuper\BackendIpLogin\Domain\Session\BackendSessionHandler;
 use SKeuper\BackendIpLogin\Utility\ConfigurationUtility;
 use SKeuper\BackendIpLogin\Utility\IpUtility;
+use TYPO3\CMS\Core\Configuration\Exception\ExtensionConfigurationExtensionNotConfiguredException;
+use TYPO3\CMS\Core\Configuration\Exception\ExtensionConfigurationPathDoesNotExistException;
 use TYPO3\CMS\Core\Page\PageRenderer;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Core\Utility\VersionNumberUtility;
-use TYPO3\CMS\Extbase\Object\ObjectManager;
 
 /**
  * Class for using the Hook defined in the PageRenderer class
- *
- * Class PageRendererHook
- * @package SKeuper\BackendIpLogin\Classes\Hook
  */
 class PageRendererHook
 {
-    use \SKeuper\BackendIpLogin\Component\HookRegisterComponent;
-
-    /*
-     * you can define your hooks here, library -> hook -> function name
-     */
-    const associations = [
-        "t3lib/class.t3lib_pagerenderer.php" => [
-            "render-preProcess" => [
-                "pageRendererPreProcessHook"
-            ]
-        ]
-    ];
-
     /**
      * The pageRendererPreProcess hook.
      * Here we check the TYPO3 version and inject our additional HTML/Javascript code to modify the login page
      *
-     * @param $parameters
-     * @param $Obj
+     * @param array $parameters
+     * @param PageRenderer $pageRenderer
+     * @throws ExtensionConfigurationExtensionNotConfiguredException
+     * @throws ExtensionConfigurationPathDoesNotExistException
+     * @throws Exception
      */
-    public function pageRendererPreProcessHook(array $parameters, PageRenderer &$Obj)
+    public function pageRendererPreProcessHook(array $parameters, PageRenderer $pageRenderer)
     {
-        /** @var ObjectManager $objectManager */
-        $objectManager = GeneralUtility::makeInstance(ObjectManager::class);
-
-        // FixMe other extensions injecting js code inline into the footer breaks this check
         if (TYPO3_MODE == 'BE' && !$GLOBALS['BE_USER']->user
-            && !$parameters["jsFooterInline"]
             && $backendUsers = BackendUserRepository::getBackendUsers(
                 GeneralUtility::getIndpEnv('REMOTE_ADDR'),
                 IpUtility::getNetworkAddress()
             )
         ) {
-            $cssFiles = [];
             $jsFiles = [];
-            $typo3Version = VersionNumberUtility::convertVersionNumberToInteger(TYPO3_version);
-            if ($typo3Version >= 7000000 && $typo3Version < 10000000) {
-                $cssFiles = [
-                    "EXT:backend_ip_login/Resources/Public/css/login.css",
-                ];
-                if (ConfigurationUtility::getConfigurationKey("option.displayAccounts")) {
-                    $jsCode = @file_get_contents(GeneralUtility::getFileAbsFileName('EXT:backend_ip_login/Resources/Public/js/list_accounts.js'));
-                    foreach (array_reverse($backendUsers) as $backendUser) {
-                        $jsCode .= sprintf("userform.insertBefore(htmlToElement('%s'), userform.firstChild);",
-                            '<button type="button" class="btn btn-block btn-login btn-autologin">' . $backendUser['username'] . '</button>'
-                        );
-                    }
-                    $jsCode .= @file_get_contents(GeneralUtility::getFileAbsFileName('EXT:backend_ip_login/Resources/Public/js/scroll_top.js'));
-                } else {
-                    $jsFiles[] = 'EXT:backend_ip_login/Resources/Public/js/auto_login.js';
+            $cssFiles = [
+                "EXT:backend_ip_login/Resources/Public/Css/login.css",
+            ];
+
+            if (ConfigurationUtility::getConfigurationKey("option.displayAccounts")) {
+                $jsCode = @file_get_contents(GeneralUtility::getFileAbsFileName('EXT:backend_ip_login/Resources/Public/JavaScript/list_accounts.js'));
+
+                $userCode = '';
+                foreach (array_reverse($backendUsers) as $backendUser) {
+                    $userCode .= sprintf("userForm.insertBefore(backendIpLogin.htmlToElement('%s'), userForm.firstChild);",
+                        '<button type="button" class="btn btn-block btn-login btn-autologin">' . $backendUser['username'] . '</button>'
+                    );
                 }
+
+                // wrap the generated backend user insertion code
+                $jsCode .= sprintf('document.addEventListener("DOMContentLoaded", function () {
+                    var userForm = document.getElementById("users");
+                    var backendIpLogin = new BackendIpLogin();
+                    %s
+                });', $userCode);
+
+                // add small script to scroll to the top again since browsers prefer to jump back to scroll positions on reloads
+                $jsCode .= @file_get_contents(GeneralUtility::getFileAbsFileName('EXT:backend_ip_login/Resources/Public/JavaScript/scroll_top.js'));
             } else {
-                # unknown number, don't take any action in the template
-                $jsCode = "";
+                $jsFiles[] = 'EXT:backend_ip_login/Resources/Public/JavaScript/auto_login.js';
+                $jsCode = '';
             }
 
-            /** @var PageRenderer $pageRenderer */
-            $pageRenderer = $objectManager->get(PageRenderer::class);
-            /*
-             * old way to inject js code, deprecated since TYPO3 8.x
-             * TYPO3\CMS\Backend\Template\DocumentTemplate->preStartPageHook
-             * $Obj->extJScode .= $jsCode;
-             */
             $pageRenderer->addJsFooterInlineCode("backend auto login", $jsCode);
 
             foreach ($cssFiles as $cssFile) {
                 $pageRenderer->addCssFile($cssFile);
             }
+
             foreach ($jsFiles as $jsFile) {
                 $pageRenderer->addJsFooterFile($jsFile);
             }
@@ -119,7 +100,7 @@ class PageRendererHook
 
         // save the ip address and network address on successful login
         /** @var BackendSessionHandler $backendSessionHandler */
-        $backendSessionHandler = $objectManager->get(BackendSessionHandler::class);
+        $backendSessionHandler = GeneralUtility::makeInstance(BackendSessionHandler::class);
         if ($GLOBALS['BE_USER']->user && !$backendSessionHandler->get("saved_ip")) {
             $this->executePostLoginHook();
             $allowLocalNetwork = boolval(ConfigurationUtility::getConfigurationKey("option.allowLocalNetwork"));

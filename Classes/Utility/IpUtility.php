@@ -5,7 +5,7 @@ namespace SKeuper\BackendIpLogin\Utility;
 /***************************************************************
  *  Copyright notice
  *
- *  (c) 2017-2018 Steffen Keuper <steffen.keuper@web.de>
+ *  (c) 2017-2022 Steffen Keuper <steffen.keuper@web.de>
  *
  *  All rights reserved
  *
@@ -26,6 +26,8 @@ namespace SKeuper\BackendIpLogin\Utility;
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
+use TYPO3\CMS\Core\Configuration\Exception\ExtensionConfigurationExtensionNotConfiguredException;
+use TYPO3\CMS\Core\Configuration\Exception\ExtensionConfigurationPathDoesNotExistException;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
@@ -39,6 +41,8 @@ class IpUtility
      * check if the user is from the local network
      *
      * @return bool
+     * @throws ExtensionConfigurationExtensionNotConfiguredException
+     * @throws ExtensionConfigurationPathDoesNotExistException
      */
     static public function isLocalNetworkAddress(): bool
     {
@@ -83,6 +87,8 @@ class IpUtility
      * @param string $ipAddress
      * @param string $ipNetworkMask
      * @return string
+     * @throws ExtensionConfigurationExtensionNotConfiguredException
+     * @throws ExtensionConfigurationPathDoesNotExistException
      */
     static public function getNetworkAddress(string $ipAddress = '', string $ipNetworkMask = ''): string
     {
