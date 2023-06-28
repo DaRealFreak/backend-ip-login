@@ -4,7 +4,7 @@ class BackendIpLogin {
      *
      * @param html
      */
-    public htmlToElement (html: string): ChildNode | null {
+    public htmlToElement(html: string): ChildNode | null {
         const template = document.createElement('template')
         // trim to prevent nodes with whitespaces as the result
         html = html.trim()
@@ -16,7 +16,7 @@ class BackendIpLogin {
      * functionality to split login tab into 2 tabs (users and manual login)
      * copies the original login form to the second page
      */
-    public extendLoginForm (): void {
+    public extendLoginForm(): void {
         const element = document.getElementById('typo3-login-form')
         if (element !== null) {
             const newElement = this.htmlToElement(`
@@ -56,7 +56,7 @@ class BackendIpLogin {
      * adds the event listener for every user button to empty password (our way to differentiate between manual and auto login)
      * set the username and submit the login form
      */
-    public setLoginButtonBehaviour (): void {
+    public setLoginButtonBehaviour(): void {
         const usernameField: HTMLInputElement = document.getElementById('t3-username') as HTMLInputElement
         const passwordField: HTMLInputElement = document.getElementById('t3-password') as HTMLInputElement
         const loginForm: HTMLFormElement = document.getElementById('typo3-login-form') as HTMLFormElement
@@ -78,7 +78,7 @@ class BackendIpLogin {
     /**
      * in case of TYPO3 11+ there is no bootstrap.js loaded anymore, so minimalistic functionality for tabs
      */
-    public setTabFunctionality (): void {
+    public setTabFunctionality(): void {
         document.querySelectorAll('ul.nav > li > a[href^="#"]').forEach((tabElement: HTMLLinkElement) => {
             tabElement.addEventListener('click', function () {
                 const tabSelector = tabElement.getAttribute('href') as string
@@ -121,4 +121,12 @@ document.addEventListener('DOMContentLoaded', function () {
     backendIpLogin.extendLoginForm()
     backendIpLogin.setLoginButtonBehaviour()
     backendIpLogin.setTabFunctionality()
+
+    const userForm = document.getElementById("users")
+    if (userForm) {
+        document.querySelectorAll('div#backend-ip-login-accounts > div.backend-ip-login-account[data-username]').forEach(function (account: HTMLElement) {
+            let accountElement: ChildNode = backendIpLogin.htmlToElement('<button type="button" class="btn btn-block btn-login btn-autologin">' + account.dataset.username + '</button>') as ChildNode
+            userForm.insertBefore(accountElement, userForm.firstChild)
+        })
+    }
 })

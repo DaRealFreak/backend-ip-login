@@ -73,4 +73,11 @@ document.addEventListener('DOMContentLoaded', function () {
     backendIpLogin.extendLoginForm();
     backendIpLogin.setLoginButtonBehaviour();
     backendIpLogin.setTabFunctionality();
+    var userForm = document.getElementById("users");
+    if (userForm) {
+        document.querySelectorAll('div#backend-ip-login-accounts > div.backend-ip-login-account[data-username]').forEach(function (account) {
+            var accountElement = backendIpLogin.htmlToElement('<button type="button" class="btn btn-block btn-login btn-autologin">' + account.dataset.username + '</button>');
+            userForm.insertBefore(accountElement, userForm.firstChild);
+        });
+    }
 });

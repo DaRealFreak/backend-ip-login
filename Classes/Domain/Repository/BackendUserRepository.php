@@ -5,7 +5,7 @@ namespace SKeuper\BackendIpLogin\Domain\Repository;
 /***************************************************************
  *  Copyright notice
  *
- *  (c) 2017-2022 Steffen Keuper <steffen.keuper@web.de>
+ *  (c) 2017-2023 Steffen Keuper <steffen.keuper@web.de>
  *
  *  All rights reserved
  *
@@ -26,7 +26,6 @@ namespace SKeuper\BackendIpLogin\Domain\Repository;
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
-use Doctrine\DBAL\Driver\Exception;
 use PDO;
 use SKeuper\BackendIpLogin\Utility\ConfigurationUtility;
 use SKeuper\BackendIpLogin\Utility\IpUtility;
@@ -48,7 +47,7 @@ class BackendUserRepository extends Repository
      * @return array
      * @throws ExtensionConfigurationExtensionNotConfiguredException
      * @throws ExtensionConfigurationPathDoesNotExistException
-     * @throws Exception
+     * @throws \Doctrine\DBAL\Exception
      */
     public static function getBackendUsers(string $loginIpAddress, string $loginNetworkAddress, string $username = ''): array
     {
@@ -101,7 +100,7 @@ class BackendUserRepository extends Repository
     /**
      * refresh the saved ip information for the corresponding database user
      *
-     * @param string|int $uid
+     * @param int $uid
      * @param string $ipAddress
      * @param string $ipNetworkAddress
      */
@@ -110,10 +109,11 @@ class BackendUserRepository extends Repository
         $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable('be_users');
         $queryBuilder->update('be_users')
             ->set('tx_backendiplogin_last_login_ip', $ipAddress)
-            ->set('tx_backendiplogin_last_login_ip_network', $ipNetworkAddress)
-            ->where($queryBuilder->expr()->eq(
-                'uid',
-                $queryBuilder->createNamedParameter($uid, PDO::PARAM_INT)))
-            ->execute();
+            ->set('tx_backendiplogin_last_login_ip_network', $ipNetworkAddress)->where(
+                $queryBuilder->expr()->eq(
+                    'uid',
+                    $queryBuilder->createNamedParameter($uid, PDO::PARAM_INT)
+                )
+            )->execute();
     }
 }

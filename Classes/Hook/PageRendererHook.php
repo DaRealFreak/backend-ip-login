@@ -5,7 +5,7 @@ namespace SKeuper\BackendIpLogin\Hook;
 /***************************************************************
  *  Copyright notice
  *
- *  (c) 2017-2022 Steffen Keuper <steffen.keuper@web.de>
+ *  (c) 2017-2023 Steffen Keuper <steffen.keuper@web.de>
  *
  *  All rights reserved
  *
@@ -74,30 +74,22 @@ class PageRendererHook
             ];
 
             if (ConfigurationUtility::getConfigurationKey("option.displayAccounts")) {
-                $jsCode = @file_get_contents(GeneralUtility::getFileAbsFileName('EXT:backend_ip_login/Resources/Public/JavaScript/list_accounts.js'));
-
-                $userCode = '';
+                $userHtml = '<div id="backend-ip-login-accounts">';
                 foreach (array_reverse($backendUsers) as $backendUser) {
-                    $userCode .= sprintf("userForm.insertBefore(backendIpLogin.htmlToElement('%s'), userForm.firstChild);",
-                        '<button type="button" class="btn btn-block btn-login btn-autologin">' . $backendUser['username'] . '</button>'
-                    );
+                    $userHtml .= '<div class="backend-ip-login-account" data-username="' . $backendUser['username'] . '"/>';
                 }
+                $userHtml .= '</div>';
 
-                // wrap the generated backend user insertion code
-                $jsCode .= sprintf('document.addEventListener("DOMContentLoaded", function () {
-                    var userForm = document.getElementById("users");
-                    var backendIpLogin = new BackendIpLogin();
-                    %s
-                });', $userCode);
+                // add HTML to generate the account list with the loaded Javascript files
+                // since inline Javascript is not allowed in TYPO3 12 anymore by default
+                $pageRenderer->addBodyContent($userHtml);
 
-                // add small script to scroll to the top again since browsers prefer to jump back to scroll positions on reloads
-                $jsCode .= @file_get_contents(GeneralUtility::getFileAbsFileName('EXT:backend_ip_login/Resources/Public/JavaScript/scroll_top.js'));
+                // load scripts for the account list
+                $jsFiles[] = 'EXT:backend_ip_login/Resources/Public/JavaScript/list_accounts.js';
+                $jsFiles[] = 'EXT:backend_ip_login/Resources/Public/JavaScript/scroll_top.js';
             } else {
                 $jsFiles[] = 'EXT:backend_ip_login/Resources/Public/JavaScript/auto_login.js';
-                $jsCode = '';
             }
-
-            $pageRenderer->addJsFooterInlineCode("backend auto login", $jsCode);
 
             foreach ($cssFiles as $cssFile) {
                 $pageRenderer->addCssFile($cssFile);

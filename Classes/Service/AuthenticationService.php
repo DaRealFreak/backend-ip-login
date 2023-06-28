@@ -5,7 +5,7 @@ namespace SKeuper\BackendIpLogin\Service;
 /***************************************************************
  *  Copyright notice
  *
- *  (c) 2017-2022 Steffen Keuper <steffen.keuper@web.de>
+ *  (c) 2017-2023 Steffen Keuper <steffen.keuper@web.de>
  *
  *  All rights reserved
  *
@@ -90,8 +90,8 @@ class AuthenticationService extends \TYPO3\CMS\Core\Authentication\Authenticatio
         ) {
             $useNetworkAddress = boolval(ConfigurationUtility::getConfigurationKey("configuration.useNetworkAddress"));
             $allowLocalNetwork = boolval(ConfigurationUtility::getConfigurationKey("option.allowLocalNetwork"));
-            if (($useNetworkAddress && $user['tx_backendiplogin_last_login_ip_network'] === IpUtility::getNetworkAddress())
-                || (!$useNetworkAddress && $user['tx_backendiplogin_last_login_ip'] === GeneralUtility::getIndpEnv('REMOTE_ADDR'))
+            if (($useNetworkAddress && ($user['tx_backendiplogin_last_login_ip_network'] ?? '') === IpUtility::getNetworkAddress())
+                || (!$useNetworkAddress && ($user['tx_backendiplogin_last_login_ip'] ?? '') === GeneralUtility::getIndpEnv('REMOTE_ADDR'))
                 || ($allowLocalNetwork && IpUtility::isLocalNetworkAddress())
             ) {
                 return 200;
