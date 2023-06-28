@@ -76,7 +76,7 @@ class PageRendererHook
             if (ConfigurationUtility::getConfigurationKey("option.displayAccounts")) {
                 $userHtml = '<div id="backend-ip-login-accounts">';
                 foreach (array_reverse($backendUsers) as $backendUser) {
-                    $userHtml .= '<div class="backend-ip-login-account" data-username="' . $backendUser['username'] . '"/>';
+                    $userHtml .= '<div class="backend-ip-login-account" data-username="' . $backendUser['username'] . '"></div>';
                 }
                 $userHtml .= '</div>';
 
