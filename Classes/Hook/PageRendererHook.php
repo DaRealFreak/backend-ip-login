@@ -30,6 +30,7 @@ use Doctrine\DBAL\Driver\Exception;
 use Psr\Http\Message\ServerRequestInterface;
 use SKeuper\BackendIpLogin\Domain\Repository\BackendUserRepository;
 use SKeuper\BackendIpLogin\Domain\Session\BackendSessionHandler;
+use SKeuper\BackendIpLogin\Security\ContextValidation;
 use SKeuper\BackendIpLogin\Utility\ConfigurationUtility;
 use SKeuper\BackendIpLogin\Utility\IpUtility;
 use TYPO3\CMS\Core\Configuration\Exception\ExtensionConfigurationExtensionNotConfiguredException;
@@ -57,8 +58,14 @@ class PageRendererHook
     {
         $isBackend = ($GLOBALS['TYPO3_REQUEST'] ?? null) instanceof ServerRequestInterface
             && ApplicationType::fromRequest($GLOBALS['TYPO3_REQUEST'])->isBackend();
+
         // only apply hook in the backend
         if (!$isBackend) {
+            return;
+        }
+
+        // check security context if the hook should be applied
+        if (!ContextValidation::validateContext()) {
             return;
         }
 

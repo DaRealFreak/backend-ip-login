@@ -12,4 +12,10 @@ option {
 
     # cat=Options; type=boolean; label=LLL:EXT:backend_ip_login/Resources/Private/Language/locallang_em.xlf:backendiplogin.config.allowLocalNetwork
     allowLocalNetwork = 1
+
+    # cat=Options; type=boolean; label=LLL:EXT:backend_ip_login/Resources/Private/Language/locallang_em.xlf:backendiplogin.config.disableInProductionContext
+    disableInProductionContext = 1
+
+    # cat=Options; type=boolean; label=LLL:EXT:backend_ip_login/Resources/Private/Language/locallang_em.xlf:backendiplogin.config.limitToDdevContext
+    limitToDdevContext = 0
 }

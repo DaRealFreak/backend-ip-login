@@ -28,6 +28,7 @@ namespace SKeuper\BackendIpLogin\Service;
 
 use Doctrine\DBAL\Driver\Exception;
 use SKeuper\BackendIpLogin\Domain\Repository\BackendUserRepository;
+use SKeuper\BackendIpLogin\Security\ContextValidation;
 use SKeuper\BackendIpLogin\Utility\ConfigurationUtility;
 use SKeuper\BackendIpLogin\Utility\IpUtility;
 use TYPO3\CMS\Core\Configuration\Exception\ExtensionConfigurationExtensionNotConfiguredException;
@@ -47,6 +48,11 @@ class AuthenticationService extends \TYPO3\CMS\Core\Authentication\Authenticatio
      */
     public function getUser()
     {
+        // check the security settings if the extension functionality should be active
+        if (!ContextValidation::validateContext()) {
+            return false;
+        }
+
         if ($this->login['status'] !== 'login') {
             return false;
         }
@@ -82,6 +88,11 @@ class AuthenticationService extends \TYPO3\CMS\Core\Authentication\Authenticatio
      */
     public function authUser(array $user): int
     {
+        // check the security settings if the extension functionality should be active
+        if (!ContextValidation::validateContext()) {
+            return 100;
+        }
+
         $displayAccounts = ConfigurationUtility::getConfigurationKey("option.displayAccounts");
 
         // use case for the auto login, since we automatically continue from the backend username and password is empty

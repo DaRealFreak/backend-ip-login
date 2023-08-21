@@ -1,30 +1,36 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<xliff version="1.0" xmlns:t3="http://typo3.org/schemas/xliff">
-	<file source-language="en" datatype="plaintext" original="messages" date="2017-05-03T11:45:52Z" product-name="backend_ip_login">
-		<header/>
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<xliff version="1.0">
+	<file source-language="en" datatype="plaintext" original="messages" date="2023-08-21T07:34:25Z">
+		<header>
+			<generator>LFEditor</generator>
+		</header>
 		<body>
-			<trans-unit id="backendiplogin.config.useNetworkAddress">
-				<source>
-				    Use network address: Use the network address instead of the ip address
-				</source>
+			<trans-unit id="backendiplogin.config.allowLocalNetwork" xml:space="preserve">
+				<source><![CDATA[Allow local network: If accessed from the local network ignore selected useNetworkAddress option and allow the local network address.
+Selects the highest authorized user who logged in the last.
+				]]></source>
 			</trans-unit>
-			<trans-unit id="backendiplogin.config.networkMask">
-				<source>
-				    Network Mask: What network mask should get used(default 255.255.255.0).
-				    Changing this will result in invalid saved network addresses and you have to login once again to refresh the entry.
-				</source>
+			<trans-unit id="backendiplogin.config.disableInProductionContext" xml:space="preserve">
+				<source><![CDATA[Disable in Production context: Disables all IP logging and extension functionality in production context for security reasons.
+				]]></source>
 			</trans-unit>
-			<trans-unit id="backendiplogin.config.displayAccounts">
-				<source>
-				    Display accounts: Display accounts instead of automatically logging in in the first account with the highest privileges.
-				    No password required if chosen from these accounts. (Not implemented yet)
-				</source>
+			<trans-unit id="backendiplogin.config.displayAccounts" xml:space="preserve">
+				<source><![CDATA[Display accounts: Display accounts instead of automatically logging you in the first account with the highest privileges.
+No password required if chosen from these accounts. (Not implemented yet)
+				]]></source>
 			</trans-unit>
-			<trans-unit id="backendiplogin.config.allowLocalNetwork">
-				<source>
-				    Allow local network: If accessed from the local network ignore selected useNetworkAddress option and allow the local network address.
-				    Selects the highest authorized user who logged in the last.
-				</source>
+			<trans-unit id="backendiplogin.config.limitToDdevContext" xml:space="preserve">
+				<source><![CDATA[Limit to DDEV context: Limit all IP logging and extension functionality to DDEV context only.
+				]]></source>
+			</trans-unit>
+			<trans-unit id="backendiplogin.config.networkMask" xml:space="preserve">
+				<source><![CDATA[Network Mask: What network mask should get used(default 255.255.255.0).
+Changing this will result in invalid saved network addresses, and you have to log in once again to refresh the entry.
+				]]></source>
+			</trans-unit>
+			<trans-unit id="backendiplogin.config.useNetworkAddress" xml:space="preserve">
+				<source><![CDATA[Use network address: Use the network address instead of the ip address
+				]]></source>
 			</trans-unit>
 		</body>
 	</file>
