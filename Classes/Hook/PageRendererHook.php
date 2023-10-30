@@ -69,7 +69,7 @@ class PageRendererHook
             return;
         }
 
-        if (!$GLOBALS['BE_USER']->user
+        if (!($GLOBALS['BE_USER']->user['uid'] ?? false)
             && $backendUsers = BackendUserRepository::getBackendUsers(
                 GeneralUtility::getIndpEnv('REMOTE_ADDR'),
                 IpUtility::getNetworkAddress()
