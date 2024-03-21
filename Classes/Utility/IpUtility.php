@@ -63,7 +63,7 @@ class IpUtility
         ];
 
         // prefer outer proxy over internal ip address
-        $clientIp = $_SERVER['HTTP_X_FORWARDED_FOR'] ? $_SERVER['HTTP_X_FORWARDED_FOR'] : $_SERVER['REMOTE_ADDR'];
+        $clientIp = $_SERVER['HTTP_X_FORWARDED_FOR'] ?? $_SERVER['REMOTE_ADDR'] ?? false;
         if (!$clientIp) {
             return False;
         }
