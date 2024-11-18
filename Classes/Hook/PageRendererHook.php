@@ -110,7 +110,7 @@ class PageRendererHook
         // save the ip address and network address on successful login
         /** @var BackendSessionHandler $backendSessionHandler */
         $backendSessionHandler = GeneralUtility::makeInstance(BackendSessionHandler::class);
-        if ($GLOBALS['BE_USER']->user && !$backendSessionHandler->get("saved_ip")) {
+        if ($GLOBALS['BE_USER']->user['uid'] ?? false && !$backendSessionHandler->get("saved_ip")) {
             $allowLocalNetwork = boolval(ConfigurationUtility::getConfigurationKey("option.allowLocalNetwork"));
             // don't update the ip information if accessed from the local network
             if (!($allowLocalNetwork && IpUtility::isLocalNetworkAddress())) {
