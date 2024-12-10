@@ -10,14 +10,9 @@ use SKeuper\BackendIpLogin\Security\ContextValidation;
 use SKeuper\BackendIpLogin\Service\AuthenticationService;
 use TYPO3\CMS\Backend\Routing\Exception\RouteNotFoundException;
 use TYPO3\CMS\Backend\Routing\RouteRedirect;
-use TYPO3\CMS\Backend\Routing\UriBuilder;
-use TYPO3\CMS\Backend\Template\ModuleTemplateFactory;
-use TYPO3\CMS\Backend\View\AuthenticationStyleInformation;
-use TYPO3\CMS\Core\Authentication\Mfa\MfaProviderRegistry;
 use TYPO3\CMS\Core\Configuration\Exception\ExtensionConfigurationExtensionNotConfiguredException;
 use TYPO3\CMS\Core\Configuration\Exception\ExtensionConfigurationPathDoesNotExistException;
 use TYPO3\CMS\Core\Http\RedirectResponse;
-use TYPO3\CMS\Core\Page\PageRenderer;
 
 class MfaController extends \TYPO3\CMS\Backend\Controller\MfaController
 {
