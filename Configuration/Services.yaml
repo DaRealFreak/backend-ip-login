@@ -2,7 +2,11 @@ services:
   _defaults:
     autowire: true
     autoconfigure: true
-    public: false
+    public: true
+
+  SKeuper\BackendIpLogin\Controller\MfaController:
+    tags: ['backend.controller']
+    public: true
 
   SKeuper\BackendIpLogin\:
     resource: '../Classes/*'

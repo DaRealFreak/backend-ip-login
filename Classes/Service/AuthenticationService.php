@@ -99,12 +99,7 @@ class AuthenticationService extends \TYPO3\CMS\Core\Authentication\Authenticatio
         if ((!$displayAccounts && (string)$this->login['uident_text'] === '' && (string)$this->login['uname'] === '') ||
             ($displayAccounts && (string)$this->login['uname'] !== '' && (string)$this->login['uident_text'] === '')
         ) {
-            $useNetworkAddress = boolval(ConfigurationUtility::getConfigurationKey("configuration.useNetworkAddress"));
-            $allowLocalNetwork = boolval(ConfigurationUtility::getConfigurationKey("option.allowLocalNetwork"));
-            if (($useNetworkAddress && ($user['tx_backendiplogin_last_login_ip_network'] ?? '') === IpUtility::getNetworkAddress())
-                || (!$useNetworkAddress && ($user['tx_backendiplogin_last_login_ip'] ?? '') === GeneralUtility::getIndpEnv('REMOTE_ADDR'))
-                || ($allowLocalNetwork && IpUtility::isLocalNetworkAddress())
-            ) {
+            if (self::isAllowedByIP($user)) {
                 return 200;
             } else {
                 return 100;
@@ -112,6 +107,29 @@ class AuthenticationService extends \TYPO3\CMS\Core\Authentication\Authenticatio
         } else {
             return 100;
         }
+    }
+
+    /**
+     * function to check current extension configuration
+     * and cross-validates the user based on the ip address or network address
+     * to check if the user is allowed to log-in based on his network information alone
+     *
+     * @param array $user
+     * @return bool
+     * @throws ExtensionConfigurationExtensionNotConfiguredException
+     * @throws ExtensionConfigurationPathDoesNotExistException
+     */
+    public static function isAllowedByIP(array $user): bool
+    {
+        $useNetworkAddress = boolval(ConfigurationUtility::getConfigurationKey("configuration.useNetworkAddress"));
+        $allowLocalNetwork = boolval(ConfigurationUtility::getConfigurationKey("option.allowLocalNetwork"));
+        if (($useNetworkAddress && ($user['tx_backendiplogin_last_login_ip_network'] ?? '') === IpUtility::getNetworkAddress())
+            || (!$useNetworkAddress && ($user['tx_backendiplogin_last_login_ip'] ?? '') === GeneralUtility::getIndpEnv('REMOTE_ADDR'))
+            || ($allowLocalNetwork && IpUtility::isLocalNetworkAddress())
+        ) {
+            return true;
+        }
+        return false;
     }
 
 }
