@@ -23,22 +23,6 @@ class MfaController extends \TYPO3\CMS\Backend\Controller\MfaController
 {
 
     /**
-     * @param UriBuilder $uriBuilder
-     * @param MfaProviderRegistry $mfaProviderRegistry
-     * @param ModuleTemplateFactory $moduleTemplateFactory
-     * @param AuthenticationStyleInformation $authenticationStyleInformation
-     * @param PageRenderer $pageRenderer
-     */
-    public function __construct(
-        UriBuilder            $uriBuilder, MfaProviderRegistry $mfaProviderRegistry,
-        ModuleTemplateFactory $moduleTemplateFactory, AuthenticationStyleInformation $authenticationStyleInformation,
-        PageRenderer          $pageRenderer
-    )
-    {
-        parent::__construct($uriBuilder, $mfaProviderRegistry, $moduleTemplateFactory, $authenticationStyleInformation, $pageRenderer);
-    }
-
-    /**
      * Handle the request for the Multi-factor authentication ourselves
      * due to there being no way to prevent the MFA authentication from getting activated.
      *
