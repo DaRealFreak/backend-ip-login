@@ -34,7 +34,7 @@ class MfaController extends \TYPO3\CMS\Backend\Controller\MfaController
      */
     public function handleRequest(ServerRequestInterface $request): ResponseInterface
     {
-        if (ContextValidation::validateContext()) {
+        if (ContextValidation::validateContext(true)) {
             $user = $this->getBackendUser()->user ?? [];
             if (AuthenticationService::isAllowedByIP($user)) {
                 $this->getBackendUser()->setAndSaveSessionData('mfa', true);

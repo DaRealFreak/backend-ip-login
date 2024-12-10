@@ -32,6 +32,10 @@ Changing this will result in invalid saved network addresses, and you have to lo
 				<source><![CDATA[Use network address: Use the network address instead of the ip address
 				]]></source>
 			</trans-unit>
+			<trans-unit id="backendiplogin.config.disableMultiFactorAuth" xml:space="preserve">
+				<source><![CDATA[Disable Multi-Factor-Authentication: Disables the Multi-Factor Authentication if allowed based on your network information.
+				]]></source>
+			</trans-unit>
 		</body>
 	</file>
 </xliff>
