@@ -26,6 +26,7 @@ namespace SKeuper\BackendIpLogin\Domain\Repository;
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
+use Doctrine\DBAL\Exception;
 use PDO;
 use SKeuper\BackendIpLogin\Utility\ConfigurationUtility;
 use SKeuper\BackendIpLogin\Utility\IpUtility;
@@ -47,7 +48,7 @@ class BackendUserRepository extends Repository
      * @return array
      * @throws ExtensionConfigurationExtensionNotConfiguredException
      * @throws ExtensionConfigurationPathDoesNotExistException
-     * @throws \Doctrine\DBAL\Exception
+     * @throws Exception
      */
     public static function getBackendUsers(string $loginIpAddress, string $loginNetworkAddress, string $username = ''): array
     {
@@ -91,10 +92,10 @@ class BackendUserRepository extends Repository
 
         $query->andWhere($queryBuilder->expr()->neq(
             'username',
-            $queryBuilder->createNamedParameter('_cli_', PDO::PARAM_STR)
+            $queryBuilder->createNamedParameter('_cli_')
         ));
 
-        return $query->execute()->fetchAllAssociative();
+        return $query->executeQuery()->fetchAllAssociative();
     }
 
     /**
@@ -114,6 +115,6 @@ class BackendUserRepository extends Repository
                     'uid',
                     $queryBuilder->createNamedParameter($uid, PDO::PARAM_INT)
                 )
-            )->execute();
+            )->executeStatement();
     }
 }
