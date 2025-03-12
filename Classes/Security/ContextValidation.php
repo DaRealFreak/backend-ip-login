@@ -27,6 +27,8 @@ namespace SKeuper\BackendIpLogin\Security;
  ***************************************************************/
 
 use SKeuper\BackendIpLogin\Utility\ConfigurationUtility;
+use TYPO3\CMS\Core\Configuration\Exception\ExtensionConfigurationExtensionNotConfiguredException;
+use TYPO3\CMS\Core\Configuration\Exception\ExtensionConfigurationPathDoesNotExistException;
 use TYPO3\CMS\Core\Core\Environment;
 
 class ContextValidation
@@ -34,11 +36,12 @@ class ContextValidation
     /**
      * validates the security settings for the current context
      *
+     * @param bool $includeMfaCheck
      * @return bool
-     * @throws \TYPO3\CMS\Core\Configuration\Exception\ExtensionConfigurationExtensionNotConfiguredException
-     * @throws \TYPO3\CMS\Core\Configuration\Exception\ExtensionConfigurationPathDoesNotExistException
+     * @throws ExtensionConfigurationExtensionNotConfiguredException
+     * @throws ExtensionConfigurationPathDoesNotExistException
      */
-    public static function validateContext(): bool
+    public static function validateContext(bool $includeMfaCheck = false): bool
     {
         $disabledInProductionContext = ConfigurationUtility::getConfigurationKey("option.disableInProductionContext");
         if ($disabledInProductionContext && Environment::getContext()->isProduction()) {
@@ -50,6 +53,14 @@ class ContextValidation
         if ($limitToDdevContext && getenv('IS_DDEV_PROJECT') !== 'true') {
             // limit to ddev context
             return false;
+        }
+
+        if ($includeMfaCheck) {
+            $disableMultiFactorAuth = ConfigurationUtility::getConfigurationKey("option.disableMultiFactorAuth");
+            if (!$disableMultiFactorAuth) {
+                // do not disable the MFA check, user still has to pass the MFA
+                return false;
+            }
         }
 
         return true;

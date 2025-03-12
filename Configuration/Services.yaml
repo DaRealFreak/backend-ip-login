@@ -7,3 +7,6 @@ services:
   SKeuper\BackendIpLogin\:
     resource: '../Classes/*'
     exclude: '../Classes/Domain/Model/*'
+
+  SKeuper\BackendIpLogin\Controller\MfaController:
+    tags: [ 'backend.controller' ]
