@@ -21,21 +21,36 @@ class BackendIpLogin {
         if (element !== null) {
             const newElement = this.htmlToElement(`
                 <div class="logincontainer">
-                    <!-- Nav tabs-->
-                    <ul class="nav nav-tabs text-center" role="tablist">
-                        <li role="presentation" class="active">
-                            <a href="#users" aria-controls="users" role="tab" data-toggle="tab">Users</a>
+                    <!-- Nav tabs -->
+                    <ul class="nav nav-tabs text-center nav-fill" role="tablist">
+                        <li role="presentation" class="nav-item">
+                            <button type="button"
+                                    class="nav-link active"
+                                    data-bs-toggle="tab"
+                                    data-bs-target="#users"
+                                    aria-controls="users"
+                                    role="tab">
+                                Users
+                            </button>
                         </li>
-                        <li role="presentation">
-                            <a href="#loginform" aria-controls="login" role="tab"
-                               data-toggle="tab">Login</a>
+                        <li role="presentation" class="nav-item">
+                            <button type="button"
+                                    class="nav-link"
+                                    data-bs-toggle="tab"
+                                    data-bs-target="#loginform"
+                                    aria-controls="loginform"
+                                    role="tab">
+                                Login
+                            </button>
                         </li>
                     </ul>
                     <!-- Tab panes -->
                     <div class="tab-content">
                         <div role="tabpanel" class="tab-pane active" id="users">
+                            <!-- Users content -->
                         </div>
                         <div role="tabpanel" class="tab-pane" id="loginform">
+                            <!-- Login form content -->
                         </div>
                     </div>
                 </div>
