@@ -18,8 +18,12 @@ class MfaRouteOverrideTest extends AbstractFunctionalTestCase
 {
     public function testAuthMfaRoutePointsToOurController(): void
     {
-        $route = GeneralUtility::makeInstance(Router::class)->getRoute('auth_mfa');
-        $target = $route->getOption('target');
+        // Router::getRoute() was added in TYPO3 12; iterate getRoutes() so the
+        // test runs on 11.5 too. Keys are route identifiers, values are Symfony
+        // Route objects on every supported version.
+        $routes = iterator_to_array(GeneralUtility::makeInstance(Router::class)->getRoutes());
+        self::assertArrayHasKey('auth_mfa', $routes);
+        $target = $routes['auth_mfa']->getOption('target');
         self::assertIsString($target);
         self::assertStringContainsString(MfaController::class, $target);
     }
