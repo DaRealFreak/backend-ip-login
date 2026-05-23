@@ -53,6 +53,7 @@ jobs:
           php-version: ${{ matrix.php }}
           coverage: none
           tools: composer:v2
+      - run: composer config audit.block-insecure false
       - run: composer require --no-update --no-interaction "typo3/cms-core:${{ matrix.typo3 }}"
       - run: composer update -W --no-interaction --no-progress --prefer-dist
       - run: vendor/bin/phpunit --testsuite=unit
@@ -75,6 +76,7 @@ jobs:
           php-version: ${{ matrix.php }}
           coverage: none
           tools: composer:v2
+      - run: composer config audit.block-insecure false
       - run: composer require --no-update --no-interaction "typo3/cms-core:${{ matrix.typo3 }}"
       - run: composer update -W --no-interaction --no-progress --prefer-dist
       - run: vendor/bin/phpstan analyse --no-progress --memory-limit=512M
@@ -117,6 +119,7 @@ jobs:
           coverage: none
           extensions: mysqli, intl
           tools: composer:v2
+      - run: composer config audit.block-insecure false
       - run: composer require --no-update --no-interaction "typo3/cms-core:${{ matrix.typo3 }}"
       - run: composer update -W --no-interaction --no-progress --prefer-dist
       - name: Run functional tests
