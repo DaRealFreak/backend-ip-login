@@ -1,0 +1,124 @@
+name: CI
+
+on:
+  push:
+    branches: [master, main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  lint:
+    name: PHP ${{ matrix.php }} lint
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        php: ['7.4', '8.0', '8.1', '8.2', '8.3', '8.4']
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          coverage: none
+          tools: composer:v2
+      - run: composer validate --strict --no-check-publish
+      - run: find Classes Tests -name '*.php' -print0 | xargs -0 -n1 -P4 php -l
+
+  unit:
+    name: Unit · TYPO3 ${{ matrix.typo3 }} / PHP ${{ matrix.php }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          # TYPO3 v11.5 supports PHP 7.4 - 8.2
+          - { php: '7.4', typo3: '^11.5' }
+          - { php: '8.0', typo3: '^11.5' }
+          - { php: '8.1', typo3: '^11.5' }
+          - { php: '8.2', typo3: '^11.5' }
+          # TYPO3 v12.4 supports PHP 8.1 - 8.3
+          - { php: '8.1', typo3: '^12.4' }
+          - { php: '8.2', typo3: '^12.4' }
+          - { php: '8.3', typo3: '^12.4' }
+          # TYPO3 v13.4 supports PHP 8.2 - 8.4
+          - { php: '8.2', typo3: '^13.4' }
+          - { php: '8.3', typo3: '^13.4' }
+          - { php: '8.4', typo3: '^13.4' }
+          # TYPO3 v14.3 requires PHP 8.4+
+          - { php: '8.4', typo3: '^14.3' }
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          coverage: none
+          tools: composer:v2
+      - run: composer require --no-update --no-interaction "typo3/cms-core:${{ matrix.typo3 }}"
+      - run: composer update -W --no-interaction --no-progress --prefer-dist
+      - run: vendor/bin/phpunit --testsuite=unit
+
+  phpstan:
+    name: PHPStan · TYPO3 ${{ matrix.typo3 }} / PHP ${{ matrix.php }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { php: '8.1', typo3: '^11.5' }
+          - { php: '8.2', typo3: '^12.4' }
+          - { php: '8.3', typo3: '^13.4' }
+          - { php: '8.4', typo3: '^14.3' }
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          coverage: none
+          tools: composer:v2
+      - run: composer require --no-update --no-interaction "typo3/cms-core:${{ matrix.typo3 }}"
+      - run: composer update -W --no-interaction --no-progress --prefer-dist
+      - run: vendor/bin/phpstan analyse --no-progress --memory-limit=512M
+
+  functional:
+    name: Functional · TYPO3 ${{ matrix.typo3 }} / PHP ${{ matrix.php }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { php: '8.1', typo3: '^11.5' }
+          - { php: '8.2', typo3: '^12.4' }
+          - { php: '8.3', typo3: '^13.4' }
+          - { php: '8.4', typo3: '^14.3' }
+    services:
+      mariadb:
+        image: mariadb:10.11
+        env:
+          MARIADB_ROOT_PASSWORD: root
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="healthcheck.sh --connect --innodb_initialized"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+    env:
+      typo3DatabaseDriver: mysqli
+      typo3DatabaseHost: 127.0.0.1
+      typo3DatabasePort: 3306
+      typo3DatabaseUsername: root
+      typo3DatabasePassword: root
+      typo3DatabaseName: func_test
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          coverage: none
+          extensions: mysqli, intl
+          tools: composer:v2
+      - run: composer require --no-update --no-interaction "typo3/cms-core:${{ matrix.typo3 }}"
+      - run: composer update -W --no-interaction --no-progress --prefer-dist
+      - name: Run functional tests
+        working-directory: Build
+        run: ../vendor/bin/phpunit -c FunctionalTests.xml --testsuite=functional
