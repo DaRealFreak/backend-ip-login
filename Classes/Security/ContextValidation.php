@@ -5,7 +5,7 @@ namespace SKeuper\BackendIpLogin\Security;
 /***************************************************************
  *  Copyright notice
  *
- *  (c) 2017-2023 Steffen Keuper <steffen.keuper@web.de>
+ *  (c) 2017-2026 Steffen Keuper <steffen.keuper@web.de>
  *
  *  All rights reserved
  *

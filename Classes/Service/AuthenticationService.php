@@ -5,7 +5,7 @@ namespace SKeuper\BackendIpLogin\Service;
 /***************************************************************
  *  Copyright notice
  *
- *  (c) 2017-2023 Steffen Keuper <steffen.keuper@web.de>
+ *  (c) 2017-2026 Steffen Keuper <steffen.keuper@web.de>
  *
  *  All rights reserved
  *
@@ -26,14 +26,13 @@ namespace SKeuper\BackendIpLogin\Service;
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
-use Doctrine\DBAL\Driver\Exception;
+use Doctrine\DBAL\Exception;
 use SKeuper\BackendIpLogin\Domain\Repository\BackendUserRepository;
 use SKeuper\BackendIpLogin\Security\ContextValidation;
 use SKeuper\BackendIpLogin\Utility\ConfigurationUtility;
 use SKeuper\BackendIpLogin\Utility\IpUtility;
 use TYPO3\CMS\Core\Configuration\Exception\ExtensionConfigurationExtensionNotConfiguredException;
 use TYPO3\CMS\Core\Configuration\Exception\ExtensionConfigurationPathDoesNotExistException;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class AuthenticationService extends \TYPO3\CMS\Core\Authentication\AuthenticationService
 {
@@ -64,7 +63,7 @@ class AuthenticationService extends \TYPO3\CMS\Core\Authentication\Authenticatio
             ($displayAccounts && (string)$this->login['uname'] !== '' && (string)$this->login['uident_text'] === '')
         ) {
             if ($backendUsers = BackendUserRepository::getBackendUsers(
-                GeneralUtility::getIndpEnv('REMOTE_ADDR'),
+                IpUtility::getClientIp(),
                 IpUtility::getNetworkAddress(),
                 $this->login['uname'])
             ) {
@@ -110,9 +109,9 @@ class AuthenticationService extends \TYPO3\CMS\Core\Authentication\Authenticatio
     }
 
     /**
-     * function to check current extension configuration
-     * and cross-validates the user based on the ip address or network address
-     * to check if the user is allowed to log-in based on his network information alone
+     * Function to check the current extension configuration
+     * and cross-validate the user based on the ip address or network address
+     * to check if the user is allowed to log in based on his network information alone
      *
      * @param array $user
      * @return bool
@@ -124,7 +123,7 @@ class AuthenticationService extends \TYPO3\CMS\Core\Authentication\Authenticatio
         $useNetworkAddress = boolval(ConfigurationUtility::getConfigurationKey("configuration.useNetworkAddress"));
         $allowLocalNetwork = boolval(ConfigurationUtility::getConfigurationKey("option.allowLocalNetwork"));
         if (($useNetworkAddress && ($user['tx_backendiplogin_last_login_ip_network'] ?? '') === IpUtility::getNetworkAddress())
-            || (!$useNetworkAddress && ($user['tx_backendiplogin_last_login_ip'] ?? '') === GeneralUtility::getIndpEnv('REMOTE_ADDR'))
+            || (!$useNetworkAddress && ($user['tx_backendiplogin_last_login_ip'] ?? '') === IpUtility::getClientIp())
             || ($allowLocalNetwork && IpUtility::isLocalNetworkAddress())
         ) {
             return true;

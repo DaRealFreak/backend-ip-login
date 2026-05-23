@@ -5,7 +5,7 @@ namespace SKeuper\BackendIpLogin\Utility;
 /***************************************************************
  *  Copyright notice
  *
- *  (c) 2017-2023 Steffen Keuper <steffen.keuper@web.de>
+ *  (c) 2017-2026 Steffen Keuper <steffen.keuper@web.de>
  *
  *  All rights reserved
  *
@@ -39,7 +39,7 @@ class ConfigurationUtility
      * return the value of the requested key if set
      *
      * @param string $key
-     * @return string
+     * @return string|null
      * @throws ExtensionConfigurationExtensionNotConfiguredException
      * @throws ExtensionConfigurationPathDoesNotExistException
      */
