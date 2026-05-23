@@ -32,6 +32,10 @@ Changing this will result in invalid saved network addresses, and you have to lo
 				<source><![CDATA[Use network address: Use the network address instead of the ip address
 				]]></source>
 			</trans-unit>
+			<trans-unit id="backendiplogin.config.networkPrefixV6" xml:space="preserve">
+				<source><![CDATA[IPv6 network prefix length (1-128, default 64): Used as the network mask equivalent for IPv6 clients when "Use network address" is enabled. /64 matches a typical IPv6 subnet.
+				]]></source>
+			</trans-unit>
 			<trans-unit id="backendiplogin.config.disableMultiFactorAuth" xml:space="preserve">
 				<source><![CDATA[Disable Multi-Factor-Authentication: Disables the Multi-Factor Authentication if allowed based on your network information.
 				]]></source>

@@ -1,1 +1,8 @@
 node_modules
+/vendor
+/composer.lock
+/.phpunit.cache
+/.phpunit.result.cache
+/public
+/var
+/Build/.phpunit.cache

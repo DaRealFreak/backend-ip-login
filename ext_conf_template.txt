@@ -4,6 +4,9 @@ configuration {
 
     # cat=Configuration; type=string; label=LLL:EXT:backend_ip_login/Resources/Private/Language/locallang_em.xlf:backendiplogin.config.networkMask
     networkMask = 255.255.255.0
+
+    # cat=Configuration; type=int+; label=LLL:EXT:backend_ip_login/Resources/Private/Language/locallang_em.xlf:backendiplogin.config.networkPrefixV6
+    networkPrefixV6 = 64
 }
 
 option {

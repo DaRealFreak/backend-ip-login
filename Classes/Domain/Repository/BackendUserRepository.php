@@ -5,7 +5,7 @@ namespace SKeuper\BackendIpLogin\Domain\Repository;
 /***************************************************************
  *  Copyright notice
  *
- *  (c) 2017-2023 Steffen Keuper <steffen.keuper@web.de>
+ *  (c) 2017-2026 Steffen Keuper <steffen.keuper@web.de>
  *
  *  All rights reserved
  *
@@ -27,11 +27,11 @@ namespace SKeuper\BackendIpLogin\Domain\Repository;
  ***************************************************************/
 
 use Doctrine\DBAL\Exception;
-use PDO;
 use SKeuper\BackendIpLogin\Utility\ConfigurationUtility;
 use SKeuper\BackendIpLogin\Utility\IpUtility;
 use TYPO3\CMS\Core\Configuration\Exception\ExtensionConfigurationExtensionNotConfiguredException;
 use TYPO3\CMS\Core\Configuration\Exception\ExtensionConfigurationPathDoesNotExistException;
+use TYPO3\CMS\Core\Database\Connection;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Database\Query\QueryBuilder;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -113,7 +113,7 @@ class BackendUserRepository extends Repository
             ->set('tx_backendiplogin_last_login_ip_network', $ipNetworkAddress)->where(
                 $queryBuilder->expr()->eq(
                     'uid',
-                    $queryBuilder->createNamedParameter($uid, PDO::PARAM_INT)
+                    $queryBuilder->createNamedParameter($uid, Connection::PARAM_INT)
                 )
             )->executeStatement();
     }

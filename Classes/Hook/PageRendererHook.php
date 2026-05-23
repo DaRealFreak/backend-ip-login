@@ -5,7 +5,7 @@ namespace SKeuper\BackendIpLogin\Hook;
 /***************************************************************
  *  Copyright notice
  *
- *  (c) 2017-2023 Steffen Keuper <steffen.keuper@web.de>
+ *  (c) 2017-2026 Steffen Keuper <steffen.keuper@web.de>
  *
  *  All rights reserved
  *
@@ -26,7 +26,7 @@ namespace SKeuper\BackendIpLogin\Hook;
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
-use Doctrine\DBAL\Driver\Exception;
+use Doctrine\DBAL\Exception;
 use Psr\Http\Message\ServerRequestInterface;
 use SKeuper\BackendIpLogin\Domain\Repository\BackendUserRepository;
 use SKeuper\BackendIpLogin\Domain\Session\BackendSessionHandler;
@@ -52,7 +52,7 @@ class PageRendererHook
      * @param PageRenderer $pageRenderer
      * @throws ExtensionConfigurationExtensionNotConfiguredException
      * @throws ExtensionConfigurationPathDoesNotExistException
-     * @throws \Doctrine\DBAL\Exception
+     * @throws Exception
      */
     public function pageRendererPreProcessHook(array $parameters, PageRenderer $pageRenderer): void
     {
@@ -71,7 +71,7 @@ class PageRendererHook
 
         if (!($GLOBALS['BE_USER']->user['uid'] ?? false)
             && $backendUsers = BackendUserRepository::getBackendUsers(
-                GeneralUtility::getIndpEnv('REMOTE_ADDR'),
+                IpUtility::getClientIp(),
                 IpUtility::getNetworkAddress()
             )
         ) {
@@ -116,7 +116,7 @@ class PageRendererHook
             if (!($allowLocalNetwork && IpUtility::isLocalNetworkAddress())) {
                 BackendUserRepository::updateIpInformation(
                     $GLOBALS['BE_USER']->user['uid'],
-                    GeneralUtility::getIndpEnv('REMOTE_ADDR'),
+                    IpUtility::getClientIp(),
                     IpUtility::getNetworkAddress()
                 );
             }
