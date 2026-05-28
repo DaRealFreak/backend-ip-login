@@ -1,32 +1,66 @@
-var BackendIpLogin = (function () {
-    function BackendIpLogin() {
-    }
-    BackendIpLogin.prototype.htmlToElement = function (html) {
-        var template = document.createElement('template');
+"use strict";
+class BackendIpLogin {
+    htmlToElement(html) {
+        const template = document.createElement('template');
         html = html.trim();
         template.innerHTML = html;
         return template.content.firstChild;
-    };
-    BackendIpLogin.prototype.extendLoginForm = function () {
-        var element = document.getElementById('typo3-login-form');
+    }
+    extendLoginForm() {
+        const element = document.getElementById('typo3-login-form');
         if (element !== null) {
-            var newElement = this.htmlToElement("\n                <div class=\"logincontainer\">\n                    <!-- Nav tabs -->\n                    <ul class=\"nav nav-tabs text-center nav-fill\" role=\"tablist\">\n                        <li role=\"presentation\" class=\"nav-item\">\n                            <button type=\"button\"\n                                    class=\"nav-link active\"\n                                    data-bs-toggle=\"tab\"\n                                    data-bs-target=\"#users\"\n                                    aria-controls=\"users\"\n                                    role=\"tab\">\n                                Users\n                            </button>\n                        </li>\n                        <li role=\"presentation\" class=\"nav-item\">\n                            <button type=\"button\"\n                                    class=\"nav-link\"\n                                    data-bs-toggle=\"tab\"\n                                    data-bs-target=\"#loginform\"\n                                    aria-controls=\"loginform\"\n                                    role=\"tab\">\n                                Login\n                            </button>\n                        </li>\n                    </ul>\n                    <!-- Tab panes -->\n                    <div class=\"tab-content\">\n                        <div role=\"tabpanel\" class=\"tab-pane active\" id=\"users\">\n                            <!-- Users content -->\n                        </div>\n                        <div role=\"tabpanel\" class=\"tab-pane\" id=\"loginform\">\n                            <!-- Login form content -->\n                        </div>\n                    </div>\n                </div>\n            ".trim());
+            const newElement = this.htmlToElement(`
+                <div class="logincontainer">
+                    <!-- Nav tabs -->
+                    <ul class="nav nav-tabs text-center nav-fill" role="tablist">
+                        <li role="presentation" class="nav-item">
+                            <button type="button"
+                                    class="nav-link active"
+                                    data-bs-toggle="tab"
+                                    data-bs-target="#users"
+                                    aria-controls="users"
+                                    role="tab">
+                                Users
+                            </button>
+                        </li>
+                        <li role="presentation" class="nav-item">
+                            <button type="button"
+                                    class="nav-link"
+                                    data-bs-toggle="tab"
+                                    data-bs-target="#loginform"
+                                    aria-controls="loginform"
+                                    role="tab">
+                                Login
+                            </button>
+                        </li>
+                    </ul>
+                    <!-- Tab panes -->
+                    <div class="tab-content">
+                        <div role="tabpanel" class="tab-pane active" id="users">
+                            <!-- Users content -->
+                        </div>
+                        <div role="tabpanel" class="tab-pane" id="loginform">
+                            <!-- Login form content -->
+                        </div>
+                    </div>
+                </div>
+            `.trim());
             element.insertBefore(newElement, element.firstChild);
         }
-        var loginForm = document.getElementById('loginform');
+        const loginForm = document.getElementById('loginform');
         if (loginForm !== null) {
             loginForm.insertBefore(document.getElementById('t3-login-submit-section'), loginForm.firstChild);
             loginForm.insertBefore(document.getElementById('t3-login-password-section'), loginForm.firstChild);
             loginForm.insertBefore(document.getElementById('t3-login-username-section'), loginForm.firstChild);
         }
-    };
-    BackendIpLogin.prototype.setLoginButtonBehaviour = function () {
-        var usernameField = document.getElementById('t3-username');
-        var passwordField = document.getElementById('t3-password');
-        var loginForm = document.getElementById('typo3-login-form');
+    }
+    setLoginButtonBehaviour() {
+        const usernameField = document.getElementById('t3-username');
+        const passwordField = document.getElementById('t3-password');
+        const loginForm = document.getElementById('typo3-login-form');
         document.addEventListener('click', function (event) {
             if (this.activeElement instanceof HTMLButtonElement) {
-                var element = this.activeElement;
+                const element = this.activeElement;
                 if (element.classList.contains('btn-autologin')) {
                     usernameField.value = element.textContent !== null ? element.textContent : '';
                     passwordField.value = '';
@@ -36,15 +70,15 @@ var BackendIpLogin = (function () {
                 }
             }
         });
-    };
-    BackendIpLogin.prototype.setTabFunctionality = function () {
-        document.querySelectorAll('ul.nav > li > a[href^="#"]').forEach(function (tabElement) {
+    }
+    setTabFunctionality() {
+        document.querySelectorAll('ul.nav > li > a[href^="#"]').forEach((tabElement) => {
             tabElement.addEventListener('click', function () {
-                var tabSelector = tabElement.getAttribute('href');
-                var targetedTab = document.querySelector(tabSelector);
+                const tabSelector = tabElement.getAttribute('href');
+                const targetedTab = document.querySelector(tabSelector);
                 if (targetedTab !== null) {
-                    var targetedRole = (targetedTab.getAttribute('role') !== null ? targetedTab.getAttribute('role') : '');
-                    document.querySelectorAll("div[role=\"".concat(targetedRole, "\"]")).forEach(function (element) {
+                    const targetedRole = (targetedTab.getAttribute('role') !== null ? targetedTab.getAttribute('role') : '');
+                    document.querySelectorAll(`div[role="${targetedRole}"]`).forEach((element) => {
                         if (element.classList.contains('active')) {
                             element.classList.remove('active');
                         }
@@ -53,9 +87,9 @@ var BackendIpLogin = (function () {
                         targetedTab.classList.add('active');
                     }
                 }
-                var parentListElement = tabElement.parentElement;
-                var tabRole = parentListElement.getAttribute('role');
-                document.querySelectorAll("ul > li[role=\"".concat(tabRole, "\"]")).forEach(function (element) {
+                const parentListElement = tabElement.parentElement;
+                const tabRole = parentListElement.getAttribute('role');
+                document.querySelectorAll(`ul > li[role="${tabRole}"]`).forEach((element) => {
                     if (element.classList.contains('active')) {
                         element.classList.remove('active');
                     }
@@ -65,18 +99,17 @@ var BackendIpLogin = (function () {
                 }
             });
         });
-    };
-    return BackendIpLogin;
-}());
+    }
+}
 document.addEventListener('DOMContentLoaded', function () {
-    var backendIpLogin = new BackendIpLogin();
+    const backendIpLogin = new BackendIpLogin();
     backendIpLogin.extendLoginForm();
     backendIpLogin.setLoginButtonBehaviour();
     backendIpLogin.setTabFunctionality();
-    var userForm = document.getElementById("users");
+    const userForm = document.getElementById("users");
     if (userForm) {
         document.querySelectorAll('div#backend-ip-login-accounts > div.backend-ip-login-account[data-username]').forEach(function (account) {
-            var accountElement = backendIpLogin.htmlToElement('<button type="button" class="btn btn-block btn-login btn-autologin">' + account.dataset.username + '</button>');
+            const accountElement = backendIpLogin.htmlToElement('<button type="button" class="btn btn-block btn-login btn-autologin">' + account.dataset.username + '</button>');
             userForm.insertBefore(accountElement, userForm.firstChild);
         });
     }

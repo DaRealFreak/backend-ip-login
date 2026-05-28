@@ -94,7 +94,7 @@ class BackendIpLogin {
      * in case of TYPO3 11+ there is no bootstrap.js loaded anymore, so minimalistic functionality for tabs
      */
     public setTabFunctionality(): void {
-        document.querySelectorAll('ul.nav > li > a[href^="#"]').forEach((tabElement: HTMLLinkElement) => {
+        document.querySelectorAll<HTMLAnchorElement>('ul.nav > li > a[href^="#"]').forEach((tabElement) => {
             tabElement.addEventListener('click', function () {
                 const tabSelector = tabElement.getAttribute('href') as string
                 const targetedTab = document.querySelector(tabSelector)
@@ -139,8 +139,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
     const userForm = document.getElementById("users")
     if (userForm) {
-        document.querySelectorAll('div#backend-ip-login-accounts > div.backend-ip-login-account[data-username]').forEach(function (account: HTMLElement) {
-            let accountElement: ChildNode = backendIpLogin.htmlToElement('<button type="button" class="btn btn-block btn-login btn-autologin">' + account.dataset.username + '</button>') as ChildNode
+        document.querySelectorAll<HTMLElement>('div#backend-ip-login-accounts > div.backend-ip-login-account[data-username]').forEach(function (account) {
+            const accountElement: ChildNode = backendIpLogin.htmlToElement('<button type="button" class="btn btn-block btn-login btn-autologin">' + account.dataset.username + '</button>') as ChildNode
             userForm.insertBefore(accountElement, userForm.firstChild)
         })
     }

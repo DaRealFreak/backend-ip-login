@@ -1,3 +1,4 @@
+"use strict";
 document.addEventListener('DOMContentLoaded', function () {
     document.getElementById('t3-login-username-section').remove();
     document.getElementById('t3-login-password-section').remove();

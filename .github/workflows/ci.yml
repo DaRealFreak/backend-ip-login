@@ -81,6 +81,29 @@ jobs:
       - run: composer update -W --no-interaction --no-progress --prefer-dist
       - run: vendor/bin/phpstan analyse --no-progress --memory-limit=512M
 
+  frontend:
+    name: Frontend · Node ${{ matrix.node }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        node: ['20', '22']
+    defaults:
+      run:
+        working-directory: Build/Frontend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+          cache: npm
+          cache-dependency-path: Build/Frontend/package-lock.json
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run build
+      - name: Fail if committed Resources/Public/JavaScript is stale
+        run: git diff --exit-code -- ../../Resources/Public/JavaScript
+
   functional:
     name: Functional · TYPO3 ${{ matrix.typo3 }} / PHP ${{ matrix.php }}
     runs-on: ubuntu-latest
