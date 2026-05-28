@@ -30,6 +30,7 @@ use Psr\Http\Message\ServerRequestInterface;
 use TYPO3\CMS\Core\Configuration\Exception\ExtensionConfigurationExtensionNotConfiguredException;
 use TYPO3\CMS\Core\Configuration\Exception\ExtensionConfigurationPathDoesNotExistException;
 use TYPO3\CMS\Core\Http\NormalizedParams;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class IpUtility
 {
@@ -61,14 +62,20 @@ class IpUtility
     public static function getClientIp(): string
     {
         $request = $GLOBALS['TYPO3_REQUEST'] ?? null;
-        if (!$request instanceof ServerRequestInterface) {
-            return '';
+        if ($request instanceof ServerRequestInterface) {
+            $normalizedParams = $request->getAttribute('normalizedParams');
+            if ($normalizedParams instanceof NormalizedParams) {
+                return self::canonicalize($normalizedParams->getRemoteAddress());
+            }
         }
-        $normalizedParams = $request->getAttribute('normalizedParams');
-        if (!$normalizedParams instanceof NormalizedParams) {
-            return '';
-        }
-        return self::canonicalize($normalizedParams->getRemoteAddress());
+
+        // fallback for TYPO3 v11/v12
+        // the BackendUserAuthenticator middleware runs the auth services before RequestHandler::handle()
+        // assigns $GLOBALS['TYPO3_REQUEST'], so the PSR-7 path above returns nothing during a login POST
+        $remoteAddress = (string)GeneralUtility::getIndpEnv('REMOTE_ADDR');
+        return $remoteAddress !== ''
+            ? self::canonicalize($remoteAddress)
+            : '';
     }
 
     /**
